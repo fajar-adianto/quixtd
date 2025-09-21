@@ -7,8 +7,8 @@ TL_BASIC_TYPES = [ 'double', 'int', 'int32', 'int53', 'int64', 'string', 'Bool',
 LINE_BREAK = '\n'
 
 SIGNAL_DEF = "signals:\n    void dataChanged();" 
-INCLUDE_TDREQ = "#include \"common/qtdrequest.h\""
-INCLUDE_TDCLIENT = "#include \"client/qtdclient.h\""
+INCLUDE_TDREQ = "#include \"common/qx_td_request.h\""
+INCLUDE_TDCLIENT = "#include \"client/qx_td_client.h\""
 
 def current_datetime():
     return datetime.now().date()
@@ -52,6 +52,10 @@ def camel_to_lower_with_underscores(camel_case_str):
     # Convert to uppercase
     result = camel_to_underscores(camel_case_str).lower()
     return result
+
+def camel_to_snake(name: str) -> str:
+    s1 = re.sub(r'(.)([A-Z][a-z]+)', r'\1_\2', name)
+    return re.sub(r'([a-z0-9])([A-Z])', r'\1_\2', s1).lower()
 
 def parse_tl(tl):
     generate_functions = False
@@ -106,7 +110,7 @@ def generate_class_factory(class_name_with_prefix, childtypes):
 }};"""
     factory_cpp_str = f"""{class_name_with_prefix} *{class_name_with_prefix}Factory::create(const QJsonObject &data, QObject *parent)
 {{
-    {class_name_with_prefix} *result = Q_NULLPTR;
+    {class_name_with_prefix} *result = nullptr;
     const QString type = data["@type"].toString();
 """
     childtype_selectors = []
@@ -247,7 +251,7 @@ private:
 {getter_setter_functions_str if not generate_function else ""}
 QJsonObject {class_name_with_prefix}::marshalJson() {{
     return QJsonObject{{
-        {{ "@type", QTdObject::typeString() }},
+        {{ "@type", QxTdObject::typeString() }},
 {marshal_json_declarations_str}
     }};
 }}
@@ -299,7 +303,7 @@ QJsonObject {class_name_with_prefix}::marshalJson() {{
 
 def generate_marshal_json_declaration(cpp_field_name, field_description):
     if field_description['is_vector']:
-        return f"""        {{ "{field_description['name']}", QTdObject::marshalArrayValue(m_{cpp_field_name}) }}"""
+        return f"""        {{ "{field_description['name']}", QxTdObject::marshalArrayValue(m_{cpp_field_name}) }}"""
     if field_description['type_def'] in TL_BASIC_TYPES:
         return f"""        {{ "{field_description['name']}", m_{cpp_field_name} }}"""
     return f"""        {{ "{field_description['name']}", m_{cpp_field_name}->marshalJson() }}"""
@@ -326,18 +330,18 @@ def check_for_ancestor(definition):
 
 def generate_classname(classname, generate_function):
     if generate_function:
-        return f"QTd{classname}Request"
-    return f"QTd{classname}"
+        return f"QxTd{classname}Request"
+    return f"QxTd{classname}"
 
 def generate_ancestor_class_name(tl_class_name, tl_ancestor_name, generate_function):
     if generate_function:
         if tl_ancestor_name == 'Ok':
-            return 'QTdOkRequest'
+            return 'QxTdOkRequest'
         else:
-            return 'QTdRequest'
+            return 'QxTdRequest'
     if tl_class_name != tl_ancestor_name:
-        return f'QTd{tl_ancestor_name}'
-    return 'QTdObject'
+        return f'QxTd{tl_ancestor_name}'
+    return 'QxTdObject'
 
 def tl_type_to_unmarshal_type(tl_type):
     return {
@@ -362,8 +366,8 @@ def tl_type_to_cpp_type(tl_type):
         'string': 'QString',
         'bytes': 'QByteArray',
         'Bool': 'bool',
-    }.get(tl_type, f'QTd{convert_to_camel_case(tl_type)}')
-    if (cpp_type.startswith('QTd')):
+    }.get(tl_type, f'QxTd{convert_to_camel_case(tl_type)}')
+    if (cpp_type.startswith('QxTd')):
         is_basic_type = False
     return cpp_type, is_basic_type
 
@@ -404,13 +408,13 @@ def generate_cpp_code(tl):
 
 def save_to_files(cpp_headers, cpp_implementations):
     for class_name, cpp_content in cpp_headers:
-        header_filename = f'{class_name.lower()}.h'
+        header_filename = f'{camel_to_snake(class_name)}.h'
         with open(header_filename, 'w') as f:
             f.write(cpp_content)
         print(f'Saved {header_filename}')
 
     for class_name, cpp_content in cpp_implementations:
-        implementation_filename = f'{class_name.lower()}.cpp'
+        implementation_filename = f'{camel_to_snake(class_name)}.cpp'
         with open(implementation_filename, 'w') as f:
             f.write(cpp_content)
         print(f'Saved {implementation_filename}')

@@ -3,7 +3,10 @@ cmake_minimum_required(VERSION 3.16)
 project(QuixTd VERSION 0.1 LANGUAGES CXX)
 
 set(CMAKE_AUTOMOC ON)
+set(CMAKE_AUTORCC ON)
+set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
 set(QT_QML_OUTPUT_DIRECTORY  ${CMAKE_BINARY_DIR})
 set(QT_QML_GENERATE_QMLLS_INI ON)
 
@@ -12,241 +15,250 @@ set(QT_QML_GENERATE_QMLLS_INI ON)
 list(APPEND CMAKE_PREFIX_PATH "C:/Users/mfaja/Documents/cpp_lib/td-1.8.54/td")
 find_package(Td 1.8.54 REQUIRED)
 
-find_package(Qt6 6.2 COMPONENTS Core Qml Quick Concurrent Positioning Multimedia Widgets REQUIRED)
+find_package(Qt6 6.2 REQUIRED COMPONENTS Core Qml Sql Quick Concurrent Positioning Multimedia Widgets DBus)
 
+# Qt6 QML policies (recommended)
 qt_policy(SET QTP0001 NEW)
 qt_policy(SET QTP0004 NEW)
 qt_policy(SET QTP0005 NEW)
 
-qt_add_library(QuixTd STATIC)
+include(FetchContent)
+FetchContent_Declare(
+    asyncfuture
+    GIT_REPOSITORY "https://github.com/vpicaver/asyncfuture.git"
+    GIT_TAG master
+)
+FetchContent_MakeAvailable(asyncfuture)
+
+# Create the library as a QML plugin
+qt_add_library(QuixTd SHARED)
+
 qt_add_qml_module(QuixTd
     URI QuixTd
     VERSION 1.0
-    QML_FILES QxTdControls.qml
-    SOURCES qxtd.cpp qxtd.h
 SOURCES
-    cpp/auth/requests/qtdauthcoderesponse.cpp cpp/auth/requests/qtdauthcoderesponse.h
-    cpp/auth/requests/qtdauthdeleteaccountresponse.cpp cpp/auth/requests/qtdauthdeleteaccountresponse.h
-    cpp/auth/requests/qtdauthencryptionkeyresponse.cpp cpp/auth/requests/qtdauthencryptionkeyresponse.h
-    cpp/auth/requests/qtdauthlogoutresponse.cpp cpp/auth/requests/qtdauthlogoutresponse.h
-    cpp/auth/requests/qtdauthparametersresponse.cpp cpp/auth/requests/qtdauthparametersresponse.h
-    cpp/auth/requests/qtdauthpasswordresponse.cpp cpp/auth/requests/qtdauthpasswordresponse.h
-    cpp/auth/requests/qtdauthphonenumberresponse.cpp cpp/auth/requests/qtdauthphonenumberresponse.h
-    cpp/auth/requests/qtdauthregistrationresponse.cpp cpp/auth/requests/qtdauthregistrationresponse.h
-    cpp/auth/requests/qtdauthresendcoderequest.cpp cpp/auth/requests/qtdauthresendcoderequest.h
-    cpp/auth/qtdauthcode.cpp cpp/auth/qtdauthcode.h
-    cpp/auth/qtdauthmanager.cpp cpp/auth/qtdauthmanager.h
-    cpp/auth/qtdauthparams.cpp cpp/auth/qtdauthparams.h
-    cpp/auth/qtdauthstate.cpp cpp/auth/qtdauthstate.h
-    cpp/auth/qtdauthstatefactory.cpp cpp/auth/qtdauthstatefactory.h
-    cpp/call/qtdcalldiscardreason.cpp cpp/call/qtdcalldiscardreason.h
-    cpp/chat/requests/qtdchatreportreason.cpp cpp/chat/requests/qtdchatreportreason.h
-    cpp/chat/requests/qtdcheckchatinvitelinkrequest.cpp cpp/chat/requests/qtdcheckchatinvitelinkrequest.h
-    cpp/chat/requests/qtdclosechatrequest.cpp cpp/chat/requests/qtdclosechatrequest.h
-    cpp/chat/requests/qtdclosesecretchatrequest.cpp cpp/chat/requests/qtdclosesecretchatrequest.h
-    cpp/chat/requests/qtdcreatenewsecretchatrequest.cpp cpp/chat/requests/qtdcreatenewsecretchatrequest.h
-    cpp/chat/requests/qtdcreateprivatechatrequest.cpp cpp/chat/requests/qtdcreateprivatechatrequest.h
-    cpp/chat/requests/qtddeletechathistoryrequest.cpp cpp/chat/requests/qtddeletechathistoryrequest.h
-    cpp/chat/requests/qtdforwardmessagesrequest.cpp cpp/chat/requests/qtdforwardmessagesrequest.h
-    cpp/chat/requests/qtdgetbasicgrouprequest.cpp cpp/chat/requests/qtdgetbasicgrouprequest.h
-    cpp/chat/requests/qtdgetchatrequest.cpp cpp/chat/requests/qtdgetchatrequest.h
-    cpp/chat/requests/qtdgetchatsrequest.cpp cpp/chat/requests/qtdgetchatsrequest.h
-    cpp/chat/requests/qtdgetsecretchatrequest.cpp cpp/chat/requests/qtdgetsecretchatrequest.h
-    cpp/chat/requests/qtdgetsupergroupfullinforequest.cpp cpp/chat/requests/qtdgetsupergroupfullinforequest.h
-    cpp/chat/requests/qtdgetsupergrouprequest.cpp cpp/chat/requests/qtdgetsupergrouprequest.h
-    cpp/chat/requests/qtdjoinchatbyinvitelinkrequest.cpp cpp/chat/requests/qtdjoinchatbyinvitelinkrequest.h
-    cpp/chat/requests/qtdjoinchatrequest.cpp cpp/chat/requests/qtdjoinchatrequest.h
-    cpp/chat/requests/qtdleavechatrequest.cpp cpp/chat/requests/qtdleavechatrequest.h
-    cpp/chat/requests/qtdloadchatsrequest.cpp cpp/chat/requests/qtdloadchatsrequest.h
-    cpp/chat/requests/qtdopenchatrequest.cpp cpp/chat/requests/qtdopenchatrequest.h
-    cpp/chat/requests/qtdreportchatrequest.cpp cpp/chat/requests/qtdreportchatrequest.h
-    cpp/chat/requests/qtdsearchchatmessagesrequest.cpp cpp/chat/requests/qtdsearchchatmessagesrequest.h
-    cpp/chat/requests/qtdsearchpublicchatrequest.cpp cpp/chat/requests/qtdsearchpublicchatrequest.h
-    cpp/chat/requests/qtdsendchatactionrequest.cpp cpp/chat/requests/qtdsendchatactionrequest.h
-    cpp/chat/requests/qtdsetchatdraftrequest.cpp cpp/chat/requests/qtdsetchatdraftrequest.h
-    cpp/chat/requests/qtdsetchatmessagettlrequest.cpp cpp/chat/requests/qtdsetchatmessagettlrequest.h
-    cpp/chat/requests/qtdsetchatnotificationsettings.cpp cpp/chat/requests/qtdsetchatnotificationsettings.h
-    cpp/chat/requests/qtdsetchattitlerequest.cpp cpp/chat/requests/qtdsetchattitlerequest.h
-    cpp/chat/requests/qtdsetpinnedchatsrequest.cpp cpp/chat/requests/qtdsetpinnedchatsrequest.h
-    cpp/chat/qtdbasicgroupchat.cpp cpp/chat/qtdbasicgroupchat.h
-    cpp/chat/qtdchat.cpp cpp/chat/qtdchat.h
-    cpp/chat/qtdchataction.cpp cpp/chat/qtdchataction.h
-    cpp/chat/qtdchatactionbar.cpp cpp/chat/qtdchatactionbar.h
-    cpp/chat/qtdchatactionfactory.cpp cpp/chat/qtdchatactionfactory.h
-    cpp/chat/qtdchatadministratorrights.cpp cpp/chat/qtdchatadministratorrights.h
-    cpp/chat/qtdchatinvitelinkinfo.cpp cpp/chat/qtdchatinvitelinkinfo.h
-    cpp/chat/qtdchatlist.cpp cpp/chat/qtdchatlist.h
-    cpp/chat/qtdchatlistmodel.cpp cpp/chat/qtdchatlistmodel.h
-    cpp/chat/qtdchatlistsortfiltermodel.cpp cpp/chat/qtdchatlistsortfiltermodel.h
-    cpp/chat/qtdchatmember.cpp cpp/chat/qtdchatmember.h
-    cpp/chat/qtdchatmemberstatus.cpp cpp/chat/qtdchatmemberstatus.h
-    cpp/chat/qtdchatpermissions.cpp cpp/chat/qtdchatpermissions.h
-    cpp/chat/qtdchatposition.cpp cpp/chat/qtdchatposition.h
-    cpp/chat/qtdchattype.cpp cpp/chat/qtdchattype.h
-    cpp/chat/qtdchattypefactory.cpp cpp/chat/qtdchattypefactory.h
-    cpp/chat/qtdsecretchat.cpp cpp/chat/qtdsecretchat.h
-    cpp/chat/qtdsecretchatstate.cpp cpp/chat/qtdsecretchatstate.h
-    cpp/chat/qtdsupergroupchat.cpp cpp/chat/qtdsupergroupchat.h
-    cpp/client/requests/qtdcloserequest.cpp cpp/client/requests/qtdcloserequest.h
-    cpp/client/qtdclient.cpp cpp/client/qtdclient.h
-    cpp/client/qtdhandle.cpp cpp/client/qtdhandle.h
-    cpp/client/qtdthread.cpp cpp/client/qtdthread.h
-    cpp/common/qabstractint64id.cpp cpp/common/qabstractint64id.h
+    cpp/auth/requests/qx_td_auth_code_response.cpp cpp/auth/requests/qx_td_auth_code_response.h
+    cpp/auth/requests/qx_td_auth_delete_account_response.cpp cpp/auth/requests/qx_td_auth_delete_account_response.h
+    cpp/auth/requests/qx_td_auth_encryption_key_response.cpp cpp/auth/requests/qx_td_auth_encryption_key_response.h
+    cpp/auth/requests/qx_td_auth_logout_response.cpp cpp/auth/requests/qx_td_auth_logout_response.h
+    cpp/auth/requests/qx_td_auth_parameters_response.cpp cpp/auth/requests/qx_td_auth_parameters_response.h
+    cpp/auth/requests/qx_td_auth_password_response.cpp cpp/auth/requests/qx_td_auth_password_response.h
+    cpp/auth/requests/qx_td_auth_phone_number_response.cpp cpp/auth/requests/qx_td_auth_phone_number_response.h
+    cpp/auth/requests/qx_td_auth_registration_response.cpp cpp/auth/requests/qx_td_auth_registration_response.h
+    cpp/auth/requests/qx_td_auth_resend_code_request.cpp cpp/auth/requests/qx_td_auth_resend_code_request.h
+    cpp/auth/qx_td_auth_code.cpp cpp/auth/qx_td_auth_code.h
+    cpp/auth/qx_td_auth_manager.cpp cpp/auth/qx_td_auth_manager.h
+    cpp/auth/qx_td_auth_params.cpp cpp/auth/qx_td_auth_params.h
+    cpp/auth/qx_td_auth_state.cpp cpp/auth/qx_td_auth_state.h
+    cpp/auth/qx_td_auth_state_factory.cpp cpp/auth/qx_td_auth_state_factory.h
+    cpp/call/qx_td_call_discard_reason.cpp cpp/call/qx_td_call_discard_reason.h
+    cpp/chat/requests/qx_td_chat_report_reason.cpp cpp/chat/requests/qx_td_chat_report_reason.h
+    cpp/chat/requests/qx_td_check_chat_invite_link_request.cpp cpp/chat/requests/qx_td_check_chat_invite_link_request.h
+    cpp/chat/requests/qx_td_close_chat_request.cpp cpp/chat/requests/qx_td_close_chat_request.h
+    cpp/chat/requests/qx_td_close_secret_chat_request.cpp cpp/chat/requests/qx_td_close_secret_chat_request.h
+    cpp/chat/requests/qx_td_create_new_secret_chat_request.cpp cpp/chat/requests/qx_td_create_new_secret_chat_request.h
+    cpp/chat/requests/qx_td_create_private_chat_request.cpp cpp/chat/requests/qx_td_create_private_chat_request.h
+    cpp/chat/requests/qx_td_delete_chat_history_request.cpp cpp/chat/requests/qx_td_delete_chat_history_request.h
+    cpp/chat/requests/qx_td_forward_messages_request.cpp cpp/chat/requests/qx_td_forward_messages_request.h
+    cpp/chat/requests/qx_td_get_basic_group_request.cpp cpp/chat/requests/qx_td_get_basic_group_request.h
+    cpp/chat/requests/qx_td_get_chat_request.cpp cpp/chat/requests/qx_td_get_chat_request.h
+    cpp/chat/requests/qx_td_get_chats_request.cpp cpp/chat/requests/qx_td_get_chats_request.h
+    cpp/chat/requests/qx_td_get_secret_chat_request.cpp cpp/chat/requests/qx_td_get_secret_chat_request.h
+    cpp/chat/requests/qx_td_get_super_group_full_info_request.cpp cpp/chat/requests/qx_td_get_super_group_full_info_request.h
+    cpp/chat/requests/qx_td_get_super_group_request.cpp cpp/chat/requests/qx_td_get_super_group_request.h
+    cpp/chat/requests/qx_td_join_chat_by_invite_link_request.cpp cpp/chat/requests/qx_td_join_chat_by_invite_link_request.h
+    cpp/chat/requests/qx_td_join_chat_request.cpp cpp/chat/requests/qx_td_join_chat_request.h
+    cpp/chat/requests/qx_td_leave_chat_request.cpp cpp/chat/requests/qx_td_leave_chat_request.h
+    cpp/chat/requests/qx_td_load_chats_request.cpp cpp/chat/requests/qx_td_load_chats_request.h
+    cpp/chat/requests/qx_td_open_chat_request.cpp cpp/chat/requests/qx_td_open_chat_request.h
+    cpp/chat/requests/qx_td_report_chat_request.cpp cpp/chat/requests/qx_td_report_chat_request.h
+    cpp/chat/requests/qx_td_search_chat_messages_request.cpp cpp/chat/requests/qx_td_search_chat_messages_request.h
+    cpp/chat/requests/qx_td_search_public_chat_request.cpp cpp/chat/requests/qx_td_search_public_chat_request.h
+    cpp/chat/requests/qx_td_send_chat_action_request.cpp cpp/chat/requests/qx_td_send_chat_action_request.h
+    cpp/chat/requests/qx_td_set_chat_draft_request.cpp cpp/chat/requests/qx_td_set_chat_draft_request.h
+    cpp/chat/requests/qx_td_set_chat_message_ttl_request.cpp cpp/chat/requests/qx_td_set_chat_message_ttl_request.h
+    cpp/chat/requests/qx_td_set_chat_notification_settings.cpp cpp/chat/requests/qx_td_set_chat_notification_settings.h
+    cpp/chat/requests/qx_td_set_chat_title_request.cpp cpp/chat/requests/qx_td_set_chat_title_request.h
+    cpp/chat/requests/qx_td_set_pinned_chats_request.cpp cpp/chat/requests/qx_td_set_pinned_chats_request.h
+    cpp/chat/qx_td_basic_group_chat.cpp cpp/chat/qx_td_basic_group_chat.h
+    cpp/chat/qx_td_chat.cpp cpp/chat/qx_td_chat.h
+    cpp/chat/qx_td_chat_action.cpp cpp/chat/qx_td_chat_action.h
+    cpp/chat/qx_td_chat_action_bar.cpp cpp/chat/qx_td_chat_action_bar.h
+    cpp/chat/qx_td_chat_action_factory.cpp cpp/chat/qx_td_chat_action_factory.h
+    cpp/chat/qx_td_chat_administrator_rights.cpp cpp/chat/qx_td_chat_administrator_rights.h
+    cpp/chat/qx_td_chat_invite_link_info.cpp cpp/chat/qx_td_chat_invite_link_info.h
+    cpp/chat/qx_td_chat_list.cpp cpp/chat/qx_td_chat_list.h
+    cpp/chat/qx_td_chat_list_model.cpp cpp/chat/qx_td_chat_list_model.h
+    cpp/chat/qx_td_chat_list_sort_filter_model.cpp cpp/chat/qx_td_chat_list_sort_filter_model.h
+    cpp/chat/qx_td_chat_member.cpp cpp/chat/qx_td_chat_member.h
+    cpp/chat/qx_td_chat_member_status.cpp cpp/chat/qx_td_chat_member_status.h
+    cpp/chat/qx_td_chat_permissions.cpp cpp/chat/qx_td_chat_permissions.h
+    cpp/chat/qx_td_chat_position.cpp cpp/chat/qx_td_chat_position.h
+    cpp/chat/qx_td_chat_type.cpp cpp/chat/qx_td_chat_type.h
+    cpp/chat/qx_td_chat_type_factory.cpp cpp/chat/qx_td_chat_type_factory.h
+    cpp/chat/qx_td_secret_chat.cpp cpp/chat/qx_td_secret_chat.h
+    cpp/chat/qx_td_secret_chat_state.cpp cpp/chat/qx_td_secret_chat_state.h
+    cpp/chat/qx_td_super_group_chat.cpp cpp/chat/qx_td_super_group_chat.h
+    cpp/client/requests/qx_td_close_request.cpp cpp/client/requests/qx_td_close_request.h
+    cpp/client/qx_td_client.cpp cpp/client/qx_td_client.h
+    cpp/client/qx_td_handle.cpp cpp/client/qx_td_handle.h
+    cpp/client/qx_td_thread.cpp cpp/client/qx_td_thread.h
+    cpp/common/qx_abstract_int64_id.cpp cpp/common/qx_abstract_int64_id.h
     cpp/common/qx_td_object.cpp cpp/common/qx_td_object.h
-    cpp/common/qtdhelpers.cpp cpp/common/qtdhelpers.h
-    cpp/common/qtdint.cpp cpp/common/qtdint.h
-    cpp/common/qtdrequest.cpp cpp/common/qtdrequest.h
-    cpp/common/qtdresponse.cpp cpp/common/qtdresponse.h
-    cpp/connections/qtdconnectionmanager.cpp cpp/connections/qtdconnectionmanager.h
-    cpp/connections/qtdconnectionstate.cpp cpp/connections/qtdconnectionstate.h
-    cpp/connections/qtdconnectionstatefactory.cpp cpp/connections/qtdconnectionstatefactory.h
-    cpp/files/sticker/qtdstickerformat.cpp cpp/files/sticker/qtdstickerformat.h
-    cpp/files/sticker/qtdstickertype.cpp cpp/files/sticker/qtdstickertype.h
-    cpp/files/qtdanimation.cpp cpp/files/qtdanimation.h
-    cpp/files/qtdaudio.cpp cpp/files/qtdaudio.h
-    cpp/files/qtddocument.cpp cpp/files/qtddocument.h
-    cpp/files/qtddownloadfilerequest.cpp cpp/files/qtddownloadfilerequest.h
-    cpp/files/qtdfile.cpp cpp/files/qtdfile.h
-    cpp/files/qtdlocalfile.cpp cpp/files/qtdlocalfile.h
-    cpp/files/qtdminithumbnail.cpp cpp/files/qtdminithumbnail.h
-    cpp/files/qtdphoto.cpp cpp/files/qtdphoto.h
-    cpp/files/qtdphotos.cpp cpp/files/qtdphotos.h
-    cpp/files/qtdphotosize.cpp cpp/files/qtdphotosize.h
-    cpp/files/qtdremotefile.cpp cpp/files/qtdremotefile.h
-    cpp/files/qtdsticker.cpp cpp/files/qtdsticker.h
-    cpp/files/qtdthumbnail.cpp cpp/files/qtdthumbnail.h
-    cpp/files/qtdthumbnailformat.cpp cpp/files/qtdthumbnailformat.h
-    cpp/files/qtdvideo.cpp cpp/files/qtdvideo.h
-    cpp/files/qtdvideonote.cpp cpp/files/qtdvideonote.h
-    cpp/files/qtdvoicenote.cpp cpp/files/qtdvoicenote.h
-    cpp/messages/content/qtdformattedtext.cpp cpp/messages/content/qtdformattedtext.h
-    cpp/messages/content/qtdlocation.cpp cpp/messages/content/qtdlocation.h
-    cpp/messages/content/qtdmessageanimation.cpp cpp/messages/content/qtdmessageanimation.h
-    cpp/messages/content/qtdmessageaudio.cpp cpp/messages/content/qtdmessageaudio.h
-    cpp/messages/content/qtdmessagebasicgroupchatcreate.cpp cpp/messages/content/qtdmessagebasicgroupchatcreate.h
-    cpp/messages/content/qtdmessagecall.cpp cpp/messages/content/qtdmessagecall.h
-    cpp/messages/content/qtdmessagechataddmembers.cpp cpp/messages/content/qtdmessagechataddmembers.h
-    cpp/messages/content/qtdmessagechatchangephoto.cpp cpp/messages/content/qtdmessagechatchangephoto.h
-    cpp/messages/content/qtdmessagechatchangetitle.cpp cpp/messages/content/qtdmessagechatchangetitle.h
-    cpp/messages/content/qtdmessagechatdeletemember.cpp cpp/messages/content/qtdmessagechatdeletemember.h
-    cpp/messages/content/qtdmessagechatdeletephoto.cpp cpp/messages/content/qtdmessagechatdeletephoto.h
-    cpp/messages/content/qtdmessagechatjoinbylink.cpp cpp/messages/content/qtdmessagechatjoinbylink.h
-    cpp/messages/content/qtdmessagechatsetmessageautodeletetime.cpp cpp/messages/content/qtdmessagechatsetmessageautodeletetime.h
-    cpp/messages/content/qtdmessagechatupgradefrom.cpp cpp/messages/content/qtdmessagechatupgradefrom.h
-    cpp/messages/content/qtdmessagechatupgradeto.cpp cpp/messages/content/qtdmessagechatupgradeto.h
-    cpp/messages/content/qtdmessagecontact.cpp cpp/messages/content/qtdmessagecontact.h
-    cpp/messages/content/qtdmessagecontactregistered.cpp cpp/messages/content/qtdmessagecontactregistered.h
-    cpp/messages/content/qtdmessagecustomserviceaction.cpp cpp/messages/content/qtdmessagecustomserviceaction.h
-    cpp/messages/content/qtdmessagedate.cpp cpp/messages/content/qtdmessagedate.h
-    cpp/messages/content/qtdmessagedocument.cpp cpp/messages/content/qtdmessagedocument.h
-    cpp/messages/content/qtdmessagelocation.cpp cpp/messages/content/qtdmessagelocation.h
-    cpp/messages/content/qtdmessagephoto.cpp cpp/messages/content/qtdmessagephoto.h
-    cpp/messages/content/qtdmessagepinmessage.cpp cpp/messages/content/qtdmessagepinmessage.h
-    cpp/messages/content/qtdmessagepoll.cpp cpp/messages/content/qtdmessagepoll.h
-    cpp/messages/content/qtdmessagescreenshottaken.cpp cpp/messages/content/qtdmessagescreenshottaken.h
-    cpp/messages/content/qtdmessagesticker.cpp cpp/messages/content/qtdmessagesticker.h
-    cpp/messages/content/qtdmessagesupergroupchatcreate.cpp cpp/messages/content/qtdmessagesupergroupchatcreate.h
-    cpp/messages/content/qtdmessagetext.cpp cpp/messages/content/qtdmessagetext.h
-    cpp/messages/content/qtdmessageunreadlabel.cpp cpp/messages/content/qtdmessageunreadlabel.h
-    cpp/messages/content/qtdmessageunsupported.cpp cpp/messages/content/qtdmessageunsupported.h
-    cpp/messages/content/qtdmessagevideo.cpp cpp/messages/content/qtdmessagevideo.h
-    cpp/messages/content/qtdmessagevideonote.cpp cpp/messages/content/qtdmessagevideonote.h
-    cpp/messages/content/qtdmessagevoicenote.cpp cpp/messages/content/qtdmessagevoicenote.h
-    cpp/messages/content/qtdpoll.cpp cpp/messages/content/qtdpoll.h
-    cpp/messages/content/qtdpolloption.cpp cpp/messages/content/qtdpolloption.h
-    cpp/messages/content/qtdpolltype.cpp cpp/messages/content/qtdpolltype.h
-    cpp/messages/content/qtdtextentity.cpp cpp/messages/content/qtdtextentity.h
-    cpp/messages/content/qtdtextentitytype.cpp cpp/messages/content/qtdtextentitytype.h
-    cpp/messages/content/qtdwebpage.cpp cpp/messages/content/qtdwebpage.h
-    cpp/messages/forwardinfo/qtdmessageforwardinfo.cpp cpp/messages/forwardinfo/qtdmessageforwardinfo.h
-    cpp/messages/forwardinfo/qtdmessageforwardorigin.cpp cpp/messages/forwardinfo/qtdmessageforwardorigin.h
-    cpp/messages/forwardinfo/qtdmessageforwardoriginfactory.cpp cpp/messages/forwardinfo/qtdmessageforwardoriginfactory.h
-    cpp/messages/replymarkup/qtdkeyboardbutton.cpp cpp/messages/replymarkup/qtdkeyboardbutton.h
-    cpp/messages/replymarkup/qtdkeyboardbuttontype.cpp cpp/messages/replymarkup/qtdkeyboardbuttontype.h
-    cpp/messages/replymarkup/qtdreplymarkup.cpp cpp/messages/replymarkup/qtdreplymarkup.h
+    cpp/common/qx_td_helpers.cpp cpp/common/qx_td_helpers.h
+    cpp/common/qx_td_int.cpp cpp/common/qx_td_int.h
+    cpp/common/qx_td_request.cpp cpp/common/qx_td_request.h
+    cpp/common/qx_td_response.cpp cpp/common/qx_td_response.h
+    cpp/connections/qx_td_connection_manager.cpp cpp/connections/qx_td_connection_manager.h
+    cpp/connections/qx_td_connection_state.cpp cpp/connections/qx_td_connection_state.h
+    cpp/connections/qx_td_connection_state_factory.cpp cpp/connections/qx_td_connection_state_factory.h
+    cpp/files/sticker/qx_td_sticker_format.cpp cpp/files/sticker/qx_td_sticker_format.h
+    cpp/files/sticker/qx_td_sticker_type.cpp cpp/files/sticker/qx_td_sticker_type.h
+    cpp/files/qx_td_animation.cpp cpp/files/qx_td_animation.h
+    cpp/files/qx_td_audio.cpp cpp/files/qx_td_audio.h
+    cpp/files/qx_td_document.cpp cpp/files/qx_td_document.h
+    cpp/files/qx_td_download_file_request.cpp cpp/files/qx_td_download_file_request.h
+    cpp/files/qx_td_file.cpp cpp/files/qx_td_file.h
+    cpp/files/qx_td_local_file.cpp cpp/files/qx_td_local_file.h
+    cpp/files/qx_td_mini_thumbnail.cpp cpp/files/qx_td_mini_thumbnail.h
+    cpp/files/qx_td_photo.cpp cpp/files/qx_td_photo.h
+    cpp/files/qx_td_photos.cpp cpp/files/qx_td_photos.h
+    cpp/files/qx_td_photo_size.cpp cpp/files/qx_td_photo_size.h
+    cpp/files/qx_td_remote_file.cpp cpp/files/qx_td_remote_file.h
+    cpp/files/qx_td_sticker.cpp cpp/files/qx_td_sticker.h
+    cpp/files/qx_td_thumbnail.cpp cpp/files/qx_td_thumbnail.h
+    cpp/files/qx_td_thumbnail_format.cpp cpp/files/qx_td_thumbnail_format.h
+    cpp/files/qx_td_video.cpp cpp/files/qx_td_video.h
+    cpp/files/qx_td_video_note.cpp cpp/files/qx_td_video_note.h
+    cpp/files/qx_td_voice_note.cpp cpp/files/qx_td_voice_note.h
+    cpp/messages/content/qx_td_formatted_text.cpp cpp/messages/content/qx_td_formatted_text.h
+    cpp/messages/content/qx_td_location.cpp cpp/messages/content/qx_td_location.h
+    cpp/messages/content/qx_td_message_animation.cpp cpp/messages/content/qx_td_message_animation.h
+    cpp/messages/content/qx_td_message_audio.cpp cpp/messages/content/qx_td_message_audio.h
+    cpp/messages/content/qx_td_message_basic_group_chat_create.cpp cpp/messages/content/qx_td_message_basic_group_chat_create.h
+    cpp/messages/content/qx_td_message_call.cpp cpp/messages/content/qx_td_message_call.h
+    cpp/messages/content/qx_td_message_chat_add_members.cpp cpp/messages/content/qx_td_message_chat_add_members.h
+    cpp/messages/content/qx_td_message_chat_change_photo.cpp cpp/messages/content/qx_td_message_chat_change_photo.h
+    cpp/messages/content/qx_td_message_chat_change_title.cpp cpp/messages/content/qx_td_message_chat_change_title.h
+    cpp/messages/content/qx_td_message_chat_delete_member.cpp cpp/messages/content/qx_td_message_chat_delete_member.h
+    cpp/messages/content/qx_td_message_chat_delete_photo.cpp cpp/messages/content/qx_td_message_chat_delete_photo.h
+    cpp/messages/content/qx_td_message_chat_join_by_link.cpp cpp/messages/content/qx_td_message_chat_join_by_link.h
+    cpp/messages/content/qx_td_message_chat_set_message_auto_delete_time.cpp cpp/messages/content/qx_td_message_chat_set_message_auto_delete_time.h
+    cpp/messages/content/qx_td_message_chat_upgrade_from.cpp cpp/messages/content/qx_td_message_chat_upgrade_from.h
+    cpp/messages/content/qx_td_message_chat_upgrade_to.cpp cpp/messages/content/qx_td_message_chat_upgrade_to.h
+    cpp/messages/content/qx_td_message_contact.cpp cpp/messages/content/qx_td_message_contact.h
+    cpp/messages/content/qx_td_message_contact_registered.cpp cpp/messages/content/qx_td_message_contact_registered.h
+    cpp/messages/content/qx_td_message_custom_service_action.cpp cpp/messages/content/qx_td_message_custom_service_action.h
+    cpp/messages/content/qx_td_message_date.cpp cpp/messages/content/qx_td_message_date.h
+    cpp/messages/content/qx_td_message_document.cpp cpp/messages/content/qx_td_message_document.h
+    cpp/messages/content/qx_td_message_location.cpp cpp/messages/content/qx_td_message_location.h
+    cpp/messages/content/qx_td_message_photo.cpp cpp/messages/content/qx_td_message_photo.h
+    cpp/messages/content/qx_td_message_pin_message.cpp cpp/messages/content/qx_td_message_pin_message.h
+    cpp/messages/content/qx_td_message_poll.cpp cpp/messages/content/qx_td_message_poll.h
+    cpp/messages/content/qx_td_message_screenshot_taken.cpp cpp/messages/content/qx_td_message_screenshot_taken.h
+    cpp/messages/content/qx_td_message_sticker.cpp cpp/messages/content/qx_td_message_sticker.h
+    cpp/messages/content/qx_td_message_super_group_chat_create.cpp cpp/messages/content/qx_td_message_super_group_chat_create.h
+    cpp/messages/content/qx_td_message_text.cpp cpp/messages/content/qx_td_message_text.h
+    cpp/messages/content/qx_td_message_unread_label.cpp cpp/messages/content/qx_td_message_unread_label.h
+    cpp/messages/content/qx_td_message_unsupported.cpp cpp/messages/content/qx_td_message_unsupported.h
+    cpp/messages/content/qx_td_message_video.cpp cpp/messages/content/qx_td_message_video.h
+    cpp/messages/content/qx_td_message_video_note.cpp cpp/messages/content/qx_td_message_video_note.h
+    cpp/messages/content/qx_td_message_voice_note.cpp cpp/messages/content/qx_td_message_voice_note.h
+    cpp/messages/content/qx_td_poll.cpp cpp/messages/content/qx_td_poll.h
+    cpp/messages/content/qx_td_poll_option.cpp cpp/messages/content/qx_td_poll_option.h
+    cpp/messages/content/qx_td_poll_type.cpp cpp/messages/content/qx_td_poll_type.h
+    cpp/messages/content/qx_td_text_entity.cpp cpp/messages/content/qx_td_text_entity.h
+    cpp/messages/content/qx_td_text_entity_type.cpp cpp/messages/content/qx_td_text_entity_type.h
+    cpp/messages/content/qx_td_web_page.cpp cpp/messages/content/qx_td_web_page.h
+    cpp/messages/forwardinfo/qx_td_message_forward_info.cpp cpp/messages/forwardinfo/qx_td_message_forward_info.h
+    cpp/messages/forwardinfo/qx_td_message_forward_origin.cpp cpp/messages/forwardinfo/qx_td_message_forward_origin.h
+    cpp/messages/forwardinfo/qx_td_message_forward_origin_factory.cpp cpp/messages/forwardinfo/qx_td_message_forward_origin_factory.h
+    cpp/messages/replymarkup/qx_td_keyboard_button.cpp cpp/messages/replymarkup/qx_td_keyboard_button.h
+    cpp/messages/replymarkup/qx_td_keyboard_button_type.cpp cpp/messages/replymarkup/qx_td_keyboard_button_type.h
+    cpp/messages/replymarkup/qx_td_reply_markup.cpp cpp/messages/replymarkup/qx_td_reply_markup.h
     cpp/messages/requests/content/imessageattachmentcontent.h cpp/messages/requests/content/imessagecaptioncontent.h
-    cpp/messages/requests/content/qtdinputmessageaudio.cpp cpp/messages/requests/content/qtdinputmessageaudio.h
-    cpp/messages/requests/content/qtdinputmessagecontact.cpp cpp/messages/requests/content/qtdinputmessagecontact.h
-    cpp/messages/requests/content/qtdinputmessagedocument.cpp cpp/messages/requests/content/qtdinputmessagedocument.h
-    cpp/messages/requests/content/qtdinputmessagelocation.cpp cpp/messages/requests/content/qtdinputmessagelocation.h
-    cpp/messages/requests/content/qtdinputmessagephoto.cpp cpp/messages/requests/content/qtdinputmessagephoto.h
-    cpp/messages/requests/content/qtdinputmessagesticker.cpp cpp/messages/requests/content/qtdinputmessagesticker.h
-    cpp/messages/requests/content/qtdinputmessagetext.cpp cpp/messages/requests/content/qtdinputmessagetext.h
-    cpp/messages/requests/content/qtdinputmessagevideo.cpp cpp/messages/requests/content/qtdinputmessagevideo.h
-    cpp/messages/requests/content/qtdinputmessagevoicenote.cpp cpp/messages/requests/content/qtdinputmessagevoicenote.h
-    cpp/messages/requests/content/qtdinputthumbnail.cpp cpp/messages/requests/content/qtdinputthumbnail.h
-    cpp/messages/requests/qtddeletemessagesrequest.cpp cpp/messages/requests/qtddeletemessagesrequest.h
-    cpp/messages/requests/qtdeditmessagecaptionrequest.cpp cpp/messages/requests/qtdeditmessagecaptionrequest.h
-    cpp/messages/requests/qtdeditmessagetextrequest.cpp cpp/messages/requests/qtdeditmessagetextrequest.h
-    cpp/messages/requests/qtdgetchathistoryrequest.cpp cpp/messages/requests/qtdgetchathistoryrequest.h
-    cpp/messages/requests/qtdgetmessagelinkrequest.cpp cpp/messages/requests/qtdgetmessagelinkrequest.h
-    cpp/messages/requests/qtdgetmessagerequest.cpp cpp/messages/requests/qtdgetmessagerequest.h
-    cpp/messages/requests/qtdinputmessagecontent.cpp cpp/messages/requests/qtdinputmessagecontent.h
-    cpp/messages/requests/qtdinputmessagecontentattachmentcaption.cpp cpp/messages/requests/qtdinputmessagecontentattachmentcaption.h
-    cpp/messages/requests/qtdinputmessagecontentfactory.cpp cpp/messages/requests/qtdinputmessagecontentfactory.h
-    cpp/messages/requests/qtdmessagesendoptions.cpp cpp/messages/requests/qtdmessagesendoptions.h
-    cpp/messages/requests/qtdopenmessagecontentrequest.cpp cpp/messages/requests/qtdopenmessagecontentrequest.h
-    cpp/messages/requests/qtdsendmessagealbumrequest.cpp cpp/messages/requests/qtdsendmessagealbumrequest.h
-    cpp/messages/requests/qtdsendmessagerequest.cpp cpp/messages/requests/qtdsendmessagerequest.h
-    cpp/messages/requests/qtdsetpollanswerrequest.cpp cpp/messages/requests/qtdsetpollanswerrequest.h
-    cpp/messages/requests/qtdtogglemessagesenderisblockedrequest.cpp cpp/messages/requests/qtdtogglemessagesenderisblockedrequest.h
-    cpp/messages/requests/qtdviewmessagesrequest.cpp cpp/messages/requests/qtdviewmessagesrequest.h
-    cpp/messages/qtdchatstate.cpp cpp/messages/qtdchatstate.h
-    cpp/messages/qtddraftmessage.cpp cpp/messages/qtddraftmessage.h
-    cpp/messages/qtdmessage.cpp cpp/messages/qtdmessage.h
-    cpp/messages/qtdmessagecontent.cpp cpp/messages/qtdmessagecontent.h
-    cpp/messages/qtdmessagecontentfactory.cpp cpp/messages/qtdmessagecontentfactory.h
-    cpp/messages/qtdmessageinteractioninfo.cpp cpp/messages/qtdmessageinteractioninfo.h
-    cpp/messages/qtdmessagelink.cpp cpp/messages/qtdmessagelink.h
-    cpp/messages/qtdmessagelistmodel.cpp cpp/messages/qtdmessagelistmodel.h
-    cpp/messages/qtdmessageschedulingstate.cpp cpp/messages/qtdmessageschedulingstate.h
-    cpp/messages/qtdmessagesender.cpp cpp/messages/qtdmessagesender.h
-    cpp/messages/qtdmessagesenderchat.cpp cpp/messages/qtdmessagesenderchat.h
-    cpp/messages/qtdmessagesenderuser.cpp cpp/messages/qtdmessagesenderuser.h
-    cpp/messages/qtdmessagesendingstate.cpp cpp/messages/qtdmessagesendingstate.h
-    cpp/models/QmlObjectListModel.cpp cpp/models/QmlObjectListModel.h
-    cpp/models/QmlVariantListModel.cpp cpp/models/QmlVariantListModel.h
-    cpp/network/requests/qtdsetnetworktype.cpp cpp/network/requests/qtdsetnetworktype.h
-    cpp/network/qtdnetworktype.cpp cpp/network/qtdnetworktype.h
-    cpp/notifications/qtdenablenotifications.cpp cpp/notifications/qtdenablenotifications.h
-    cpp/notifications/qtdnotificationsettings.cpp cpp/notifications/qtdnotificationsettings.h
-    cpp/notifications/qtdregisterdevicerequest.cpp cpp/notifications/qtdregisterdevicerequest.h
-    cpp/quick/contacts.cpp cpp/quick/contacts.h
-    cpp/quick/plugin.cpp cpp/quick/plugin.h
-    cpp/quick/users.cpp cpp/quick/users.h
-    cpp/settings/requests/qtdaddproxyrequest.cpp cpp/settings/requests/qtdaddproxyrequest.h
-    cpp/settings/requests/qtddisableproxyrequest.cpp cpp/settings/requests/qtddisableproxyrequest.h
-    cpp/settings/requests/qtdeditproxyrequest.cpp cpp/settings/requests/qtdeditproxyrequest.h
-    cpp/settings/requests/qtdenableproxyrequest.cpp cpp/settings/requests/qtdenableproxyrequest.h
-    cpp/settings/requests/qtdgetproxiesrequest.cpp cpp/settings/requests/qtdgetproxiesrequest.h
-    cpp/settings/requests/qtdpingproxyrequest.cpp cpp/settings/requests/qtdpingproxyrequest.h
-    cpp/settings/requests/qtdremoveproxyrequest.cpp cpp/settings/requests/qtdremoveproxyrequest.h
-    cpp/settings/qtdproxy.cpp cpp/settings/qtdproxy.h
-    cpp/settings/qtdproxytype.cpp cpp/settings/qtdproxytype.h
-    cpp/settings/qtdsettings.cpp cpp/settings/qtdsettings.h
-    cpp/stickers/qtdstickerset.cpp cpp/stickers/qtdstickerset.h
-    cpp/stickers/qtdstickersets.cpp cpp/stickers/qtdstickersets.h
-    cpp/user/requests/qtdblockuserrequest.cpp cpp/user/requests/qtdblockuserrequest.h
-    cpp/user/requests/qtdgetcontactsrequest.cpp cpp/user/requests/qtdgetcontactsrequest.h
-    cpp/user/requests/qtdgetuserfullinforequest.cpp cpp/user/requests/qtdgetuserfullinforequest.h
-    cpp/user/requests/qtdgetuserrequest.cpp cpp/user/requests/qtdgetuserrequest.h
-    cpp/user/requests/qtdimportcontactsrequest.cpp cpp/user/requests/qtdimportcontactsrequest.h
-    cpp/user/requests/qtdremovecontactsrequest.cpp cpp/user/requests/qtdremovecontactsrequest.h
-    cpp/user/requests/qtdsearchuserbyphonenumberrequest.cpp cpp/user/requests/qtdsearchuserbyphonenumberrequest.h
-    cpp/user/qtdcontact.cpp cpp/user/qtdcontact.h
-    cpp/user/qtdemojistatus.cpp cpp/user/qtdemojistatus.h
-    cpp/user/qtdprofilephoto.cpp cpp/user/qtdprofilephoto.h
-    cpp/user/qtduser.cpp cpp/user/qtduser.h
-    cpp/user/qtduserfullinfo.cpp cpp/user/qtduserfullinfo.h
-    cpp/user/qtdusernames.cpp cpp/user/qtdusernames.h
-    cpp/user/qtdusers.cpp cpp/user/qtdusers.h
-    cpp/user/qtduserstatus.cpp cpp/user/qtduserstatus.h
-    cpp/user/qtduserstatusfactory.cpp cpp/user/qtduserstatusfactory.h
-    cpp/user/qtdusertype.cpp cpp/user/qtdusertype.h
-    cpp/utils/asyncfuture.h cpp/utils/await.h
-    cpp/utils/debug.h cpp/utils/i18n.h
-    cpp/utils/qtdmediatools.cpp cpp/utils/qtdmediatools.h
-    cpp/utils/qtdtextformatter.cpp cpp/utils/qtdtextformatter.h
+    cpp/messages/requests/content/qx_td_input_message_audio.cpp cpp/messages/requests/content/qx_td_input_message_audio.h
+    cpp/messages/requests/content/qx_td_input_message_contact.cpp cpp/messages/requests/content/qx_td_input_message_contact.h
+    cpp/messages/requests/content/qx_td_input_message_document.cpp cpp/messages/requests/content/qx_td_input_message_document.h
+    cpp/messages/requests/content/qx_td_input_message_location.cpp cpp/messages/requests/content/qx_td_input_message_location.h
+    cpp/messages/requests/content/qx_td_input_message_photo.cpp cpp/messages/requests/content/qx_td_input_message_photo.h
+    cpp/messages/requests/content/qx_td_input_message_sticker.cpp cpp/messages/requests/content/qx_td_input_message_sticker.h
+    cpp/messages/requests/content/qx_td_input_message_text.cpp cpp/messages/requests/content/qx_td_input_message_text.h
+    cpp/messages/requests/content/qx_td_input_message_video.cpp cpp/messages/requests/content/qx_td_input_message_video.h
+    cpp/messages/requests/content/qx_td_input_message_voice_note.cpp cpp/messages/requests/content/qx_td_input_message_voice_note.h
+    cpp/messages/requests/content/qx_td_input_thumbnail.cpp cpp/messages/requests/content/qx_td_input_thumbnail.h
+    cpp/messages/requests/qx_td_delete_messages_request.cpp cpp/messages/requests/qx_td_delete_messages_request.h
+    cpp/messages/requests/qx_td_edit_message_caption_request.cpp cpp/messages/requests/qx_td_edit_message_caption_request.h
+    cpp/messages/requests/qx_td_edit_message_text_request.cpp cpp/messages/requests/qx_td_edit_message_text_request.h
+    cpp/messages/requests/qx_td_get_chat_history_request.cpp cpp/messages/requests/qx_td_get_chat_history_request.h
+    cpp/messages/requests/qx_td_get_message_link_request.cpp cpp/messages/requests/qx_td_get_message_link_request.h
+    cpp/messages/requests/qx_td_get_message_request.cpp cpp/messages/requests/qx_td_get_message_request.h
+    cpp/messages/requests/qx_td_input_message_content.cpp cpp/messages/requests/qx_td_input_message_content.h
+    cpp/messages/requests/qx_td_input_message_content_attachment_caption.cpp cpp/messages/requests/qx_td_input_message_content_attachment_caption.h
+    cpp/messages/requests/qx_td_input_message_content_factory.cpp cpp/messages/requests/qx_td_input_message_content_factory.h
+    cpp/messages/requests/qx_td_message_send_options.cpp cpp/messages/requests/qx_td_message_send_options.h
+    cpp/messages/requests/qx_td_open_message_content_request.cpp cpp/messages/requests/qx_td_open_message_content_request.h
+    cpp/messages/requests/qx_td_send_message_album_request.cpp cpp/messages/requests/qx_td_send_message_album_request.h
+    cpp/messages/requests/qx_td_send_message_request.cpp cpp/messages/requests/qx_td_send_message_request.h
+    cpp/messages/requests/qx_td_set_poll_answer_request.cpp cpp/messages/requests/qx_td_set_poll_answer_request.h
+    cpp/messages/requests/qx_td_toggle_message_sender_is_blocked_request.cpp cpp/messages/requests/qx_td_toggle_message_sender_is_blocked_request.h
+    cpp/messages/requests/qx_td_view_messages_request.cpp cpp/messages/requests/qx_td_view_messages_request.h
+    cpp/messages/qx_td_chat_state.cpp cpp/messages/qx_td_chat_state.h
+    cpp/messages/qx_td_draft_message.cpp cpp/messages/qx_td_draft_message.h
+    cpp/messages/qx_td_message.cpp cpp/messages/qx_td_message.h
+    cpp/messages/qx_td_message_content.cpp cpp/messages/qx_td_message_content.h
+    cpp/messages/qx_td_message_content_factory.cpp cpp/messages/qx_td_message_content_factory.h
+    cpp/messages/qx_td_message_interaction_info.cpp cpp/messages/qx_td_message_interaction_info.h
+    cpp/messages/qx_td_message_link.cpp cpp/messages/qx_td_message_link.h
+    cpp/messages/qx_td_message_list_model.cpp cpp/messages/qx_td_message_list_model.h
+    cpp/messages/qx_td_message_scheduling_state.cpp cpp/messages/qx_td_message_scheduling_state.h
+    cpp/messages/qx_td_message_sender.cpp cpp/messages/qx_td_message_sender.h
+    cpp/messages/qx_td_message_sender_chat.cpp cpp/messages/qx_td_message_sender_chat.h
+    cpp/messages/qx_td_message_sender_user.cpp cpp/messages/qx_td_message_sender_user.h
+    cpp/messages/qx_td_message_sending_state.cpp cpp/messages/qx_td_message_sending_state.h
+    cpp/models/qx_td_object_list_model.cpp cpp/models/qx_td_object_list_model.h
+    cpp/models/qx_td_variant_list_model.cpp cpp/models/qx_td_variant_list_model.h
+    cpp/network/requests/qx_td_set_network_type.cpp cpp/network/requests/qx_td_set_network_type.h
+    cpp/network/qx_td_network_type.cpp cpp/network/qx_td_network_type.h
+    cpp/notifications/qx_td_enable_notifications.cpp cpp/notifications/qx_td_enable_notifications.h
+    cpp/notifications/qx_td_notification_settings.cpp cpp/notifications/qx_td_notification_settings.h
+    cpp/notifications/qx_td_register_device_request.cpp cpp/notifications/qx_td_register_device_request.h
+    cpp/quick/qx_contacts.cpp cpp/quick/qx_contacts.h
+    cpp/quick/plugin_reference.cpp cpp/quick/plugin_reference.h
+    cpp/quick/qx_users.cpp cpp/quick/qx_users.h
+    cpp/settings/requests/qx_td_add_proxy_request.cpp cpp/settings/requests/qx_td_add_proxy_request.h
+    cpp/settings/requests/qx_td_disable_proxy_request.cpp cpp/settings/requests/qx_td_disable_proxy_request.h
+    cpp/settings/requests/qx_td_edit_proxy_request.cpp cpp/settings/requests/qx_td_edit_proxy_request.h
+    cpp/settings/requests/qx_td_enable_proxy_request.cpp cpp/settings/requests/qx_td_enable_proxy_request.h
+    cpp/settings/requests/qx_td_get_proxies_request.cpp cpp/settings/requests/qx_td_get_proxies_request.h
+    cpp/settings/requests/qx_td_ping_proxy_request.cpp cpp/settings/requests/qx_td_ping_proxy_request.h
+    cpp/settings/requests/qx_td_remove_proxy_request.cpp cpp/settings/requests/qx_td_remove_proxy_request.h
+    cpp/settings/qx_td_proxy.cpp cpp/settings/qx_td_proxy.h
+    cpp/settings/qx_td_proxy_type.cpp cpp/settings/qx_td_proxy_type.h
+    cpp/settings/qx_td_settings.cpp cpp/settings/qx_td_settings.h
+    cpp/stickers/qx_td_sticker_set.cpp cpp/stickers/qx_td_sticker_set.h
+    cpp/stickers/qx_td_sticker_sets.cpp cpp/stickers/qx_td_sticker_sets.h
+    cpp/user/requests/qx_td_block_user_request.cpp cpp/user/requests/qx_td_block_user_request.h
+    cpp/user/requests/qx_td_get_contacts_request.cpp cpp/user/requests/qx_td_get_contacts_request.h
+    cpp/user/requests/qx_td_get_user_full_info_request.cpp cpp/user/requests/qx_td_get_user_full_info_request.h
+    cpp/user/requests/qx_td_get_user_request.cpp cpp/user/requests/qx_td_get_user_request.h
+    cpp/user/requests/qx_td_import_contacts_request.cpp cpp/user/requests/qx_td_import_contacts_request.h
+    cpp/user/requests/qx_td_remove_contacts_request.cpp cpp/user/requests/qx_td_remove_contacts_request.h
+    cpp/user/requests/qx_td_search_user_by_phone_number_request.cpp cpp/user/requests/qx_td_search_user_by_phone_number_request.h
+    cpp/user/qx_td_contact.cpp cpp/user/qx_td_contact.h
+    cpp/user/qx_td_emoji_status.cpp cpp/user/qx_td_emoji_status.h
+    cpp/user/qx_td_profile_photo.cpp cpp/user/qx_td_profile_photo.h
+    cpp/user/qx_td_user.cpp cpp/user/qx_td_user.h
+    cpp/user/qx_td_user_full_info.cpp cpp/user/qx_td_user_full_info.h
+    cpp/user/qx_td_usernames.cpp cpp/user/qx_td_usernames.h
+    cpp/user/qx_td_users.cpp cpp/user/qx_td_users.h
+    cpp/user/qx_td_user_status.cpp cpp/user/qx_td_user_status.h
+    cpp/user/qx_td_user_status_factory.cpp cpp/user/qx_td_user_status_factory.h
+    cpp/user/qx_td_user_type.cpp cpp/user/qx_td_user_type.h
+    cpp/utils/qx_td_await.h
+    cpp/utils/debug.h cpp/utils/qx_td_translate_tools.h
+    cpp/utils/qx_td_media_tools.cpp cpp/utils/qx_td_media_tools.h
+    cpp/utils/qx_td_text_formatter.cpp cpp/utils/qx_td_text_formatter.h
     cpp/auxdb/auxdb.cpp cpp/auxdb/auxdb.h
     cpp/auxdb/avatarmaptable.cpp cpp/auxdb/avatarmaptable.h
     cpp/auxdb/postal-client.cpp cpp/auxdb/postal-client.h
@@ -255,7 +267,7 @@ RESOURCES
 )
 
 set_target_properties(QuixTd PROPERTIES
-    MACOSX_BUNDLE_GUI_IDENTIFIER my.example.com
+    MACOSX_BUNDLE_GUI_IDENTIFIER quixtd
     MACOSX_BUNDLE_BUNDLE_VERSION ${PROJECT_VERSION}
     MACOSX_BUNDLE_SHORT_VERSION_STRING ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}
     MACOSX_BUNDLE TRUE
@@ -264,12 +276,43 @@ set_target_properties(QuixTd PROPERTIES
 
 target_compile_definitions(QuixTd
     PRIVATE $<$<OR:$<CONFIG:Debug>,$<CONFIG:RelWithDebInfo>>:QT_QML_DEBUG>)
+
+# Link dependencies
 target_link_libraries(QuixTd
-    PRIVATE Qt6::Core Qt6::Quick Qt6::Widgets Qt6::Qml Qt6::Concurrent Qt6::Positioning Qt6::Multimedia
-    PUBLIC Td::tdjson Td::tdapi
+    PRIVATE
+        Qt6::Concurrent
+        Qt6::Core
+        Qt6::DBus
+        Qt6::Multimedia
+        Qt6::Positioning
+        Qt6::Qml
+        Qt6::Quick
+        Qt6::Sql
+        Qt6::Widgets
+        Td::tdjson
+        Td::tdapi
+        asyncfuture
 )
 
-target_include_directories(QuixTd PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+# Public headers (if other projects will use them)
+target_include_directories(QuixTd PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/cpp)
 
 # Internal include directory.
 include_directories(cpp)
+include_directories(cpp/auth)
+include_directories(cpp/call)
+include_directories(cpp/chat)
+include_directories(cpp/client)
+include_directories(cpp/common)
+include_directories(cpp/connections)
+include_directories(cpp/files)
+include_directories(cpp/messages)
+include_directories(cpp/messages/content)
+include_directories(cpp/models)
+include_directories(cpp/network)
+include_directories(cpp/notifications)
+include_directories(cpp/quick)
+include_directories(cpp/settings)
+include_directories(cpp/stickers)
+include_directories(cpp/user)
+include_directories(cpp/utils)

@@ -1,32 +1,33 @@
 #include "qx_td_object.h"
 
-QTdObject::QTdObject(QObject *parent)
+QxTdObject::QxTdObject(QObject *parent)
     : QObject(parent)
     , m_type(UNKNOWN)
 {
+    // Intentionally left empty.
 }
 
-QTdObject::Type QTdObject::type() const
+QxTdObject::Type QxTdObject::type() const
 {
     return m_type;
 }
 
-QString QTdObject::typeString() const
+QString QxTdObject::typeString() const
 {
     return m_typeString;
 }
 
-void QTdObject::unmarshalJson(const QJsonObject &json)
+void QxTdObject::unmarshalJson(const QJsonObject &json)
 {
     m_typeString = json["@type"].toString();
 }
 
-QJsonObject QTdObject::marshalJson()
+QJsonObject QxTdObject::marshalJson()
 {
     return QJsonObject();
 }
 
-void QTdObject::setType(const QTdObject::Type type)
+void QxTdObject::setType(const QxTdObject::Type type)
 {
     m_type = type;
     emit typeChanged(m_type);

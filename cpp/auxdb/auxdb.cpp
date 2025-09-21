@@ -162,7 +162,7 @@ bool AuxDatabase::executeSqlFile(QFile &file)
     // Split string at semi-colons to break into multiple statements.
     // This is due to the SQLite driver's inability to handle multiple
     // statements in a single string.
-    QStringList statements = sql.split(";", QString::SkipEmptyParts);
+    QStringList statements = sql.split(";", Qt::SkipEmptyParts);
     foreach (QString statement, statements) {
         if (statement.trimmed() == "")
             continue;

@@ -5,23 +5,27 @@
 #include <QJsonObject>
 #include <QJsonArray>
 
+#include <QtQmlIntegration/qqmlintegration.h>
+
 /**
- * @brief The QTdObject class
+ * @brief The QxTdObject class
  *
  * Abstract base class all tdlib objects should inherit.
  *
  * All subclasses should call setType() during construction to indicate
  * the message type the class represents.
  */
-class QTdObject : public QObject
+class QxTdObject : public QObject
 {
     Q_OBJECT
-    Q_DISABLE_COPY(QTdObject)
+    Q_DISABLE_COPY(QxTdObject)
     Q_PROPERTY(Type type READ type NOTIFY typeChanged)
     Q_PROPERTY(QString typeString READ typeString NOTIFY typeChanged)
+    QML_ELEMENT
+    QML_UNCREATABLE("QxTdObject, Base TD c++ class, cannot be created in QML.")
     
 public:
-    explicit QTdObject(QObject *parent = nullptr);
+    explicit QxTdObject(QObject *parent = nullptr);
 
     /**
      * @brief Telegram Message Types
