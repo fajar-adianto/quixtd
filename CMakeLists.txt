@@ -31,7 +31,7 @@ FetchContent_Declare(
 FetchContent_MakeAvailable(asyncfuture)
 
 # Create the library as a QML plugin
-qt_add_library(QuixTd SHARED)
+qt_add_library(QuixTd STATIC)
 
 qt_add_qml_module(QuixTd
     URI QuixTd
