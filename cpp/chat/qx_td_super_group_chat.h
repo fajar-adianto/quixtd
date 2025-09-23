@@ -2,7 +2,7 @@
 #define QX_TD_SUPER_GROUP_CHAT_H
 
 #include <QObject>
-#include <QScopedPointer>
+
 #include "qx_td_chat.h"
 #include "qx_td_chat_member_status.h"
 #include "user/qx_td_usernames.h"
@@ -84,9 +84,9 @@ private:
     void parseSuperGroupId();
     Q_DISABLE_COPY(QxTdSuperGroupChat)
     QxTdInt64 m_sgId;
-    QScopedPointer<QxTdUsernames> m_userNames;
+    std::unique_ptr<QxTdUsernames> m_userNames;
     qint32 m_date;
-    QScopedPointer<QxTdChatMemberStatus> m_status;
+    std::unique_ptr<QxTdChatMemberStatus> m_status;
     QxTdInt32 m_memberCount;
     bool m_signMessages;
     bool m_isChannel;

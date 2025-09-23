@@ -41,7 +41,7 @@ QString QxTdSticker::emoji() const
 
 QxTdFile *QxTdSticker::sticker() const
 {
-    return m_sticker.data();
+    return m_sticker.get();
 }
 
 void QxTdSticker::unmarshalJson(const QJsonObject &json)
@@ -63,7 +63,7 @@ void QxTdSticker::unmarshalJson(const QJsonObject &json)
 
 QxTdThumbnail *QxTdSticker::thumbnail() const
 {
-    return m_thumbnail.data();
+    return m_thumbnail.get();
 }
 
 bool QxTdSticker::isMask() const
@@ -73,10 +73,10 @@ bool QxTdSticker::isMask() const
 
 QxTdStickerType *QxTdSticker::qmlType() const
 {
-    return m_type.data();
+    return m_type.get();
 }
 
 QxTdStickerFormat *QxTdSticker::qmlFormat() const
 {
-    return m_format.data();
+    return m_format.get();
 }

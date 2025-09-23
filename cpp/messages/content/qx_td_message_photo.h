@@ -25,8 +25,8 @@ signals:
 
 private:
     Q_DISABLE_COPY(QxTdMessagePhoto)
-    QScopedPointer<QxTdPhotos> m_photo;
-    QScopedPointer<QxTdFormattedText> m_caption;
+    std::unique_ptr<QxTdPhotos> m_photo;
+    std::unique_ptr<QxTdFormattedText> m_caption;
 };
 
 #endif // QX_TD_MESSAGE_PHOTO_H

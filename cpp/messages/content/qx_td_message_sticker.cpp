@@ -10,7 +10,7 @@ QxTdMessageSticker::QxTdMessageSticker(QObject *parent)
 
 QxTdSticker *QxTdMessageSticker::sticker() const
 {
-    return m_sticker.data();
+    return m_sticker.get();
 }
 
 bool QxTdMessageSticker::isPremium() const {

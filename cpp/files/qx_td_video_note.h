@@ -31,8 +31,8 @@ signals:
 private:
     qint32 m_duration;
     qint32 m_length;
-    QScopedPointer<QxTdThumbnail> m_thumbnail;
-    QScopedPointer<QxTdFile> m_video;
+    std::unique_ptr<QxTdThumbnail> m_thumbnail;
+    std::unique_ptr<QxTdFile> m_video;
 };
 
 #endif // QX_TD_VIDEO_NOTE_H

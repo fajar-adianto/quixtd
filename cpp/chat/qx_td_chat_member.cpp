@@ -1,7 +1,5 @@
 #include "qx_td_chat_member.h"
 
-#include <QScopedPointer>
-
 QxTdChatMember::QxTdChatMember(QObject *parent)
     : QxTdObject(parent)
     , m_inviteUserId(0)
@@ -13,7 +11,7 @@ QxTdChatMember::QxTdChatMember(QObject *parent)
 
 QxTdMessageSender *QxTdChatMember::memberId() const
 {
-    return m_memberId.data();
+    return m_memberId.get();
 }
 
 QString QxTdChatMember::qmlInviteUserId() const
@@ -38,7 +36,7 @@ qint32 QxTdChatMember::joinedChatDate() const
 
 QxTdChatMemberStatus *QxTdChatMember::status() const
 {
-    return m_status.data();
+    return m_status.get();
 }
 
 void QxTdChatMember::unmarshalJson(const QJsonObject &json)

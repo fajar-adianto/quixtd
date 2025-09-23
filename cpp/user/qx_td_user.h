@@ -108,17 +108,17 @@ private:
     Q_DISABLE_COPY(QxTdUser)
     QString m_firstName;
     QString m_lastName;
-    QScopedPointer<QxTdUsernames> m_userNames;
+    std::unique_ptr<QxTdUsernames> m_userNames;
     QString m_phoneNumber;
     qint64 m_my_id;
-    QScopedPointer<QxTdUserFullInfo> m_fullInfo;
-    QScopedPointer<QxTdUserStatus> m_status;
-    QScopedPointer<QxTdProfilePhoto> m_profilePhoto;
+    std::unique_ptr<QxTdUserFullInfo> m_fullInfo;
+    std::unique_ptr<QxTdUserStatus> m_status;
+    std::unique_ptr<QxTdProfilePhoto> m_profilePhoto;
     bool m_isVerified;
     QString m_restrictionReason;
     QString m_languageCode;
-    QScopedPointer<QxTdUserType> m_userType;
-    QScopedPointer<QxTdEmojiStatus> m_emojiStatus;
+    std::unique_ptr<QxTdUserType> m_userType;
+    std::unique_ptr<QxTdEmojiStatus> m_emojiStatus;
     bool m_isContact;
     bool m_isMutualContact;
     bool m_isPremium;

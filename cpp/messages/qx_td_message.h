@@ -175,10 +175,10 @@ private slots:
     void handleMessage(const QJsonObject &json);
 
 private:
-    QScopedPointer<QxTdMessageSender> m_sender;
+    std::unique_ptr<QxTdMessageSender> m_sender;
     QxTdInt64 m_chatId;
-    QScopedPointer<QxTdMessageSendingState> m_sendingState;
-    QScopedPointer<QxTdMessageSchedulingState> m_schedulingState;
+    std::unique_ptr<QxTdMessageSendingState> m_sendingState;
+    std::unique_ptr<QxTdMessageSchedulingState> m_schedulingState;
     bool m_isOutgoing;
     bool m_isPinned;
     bool m_canBeEdited;
@@ -195,8 +195,8 @@ private:
     bool m_containsUnreadMention;
     qint32 m_date;
     qint32 m_editDate;
-    QScopedPointer<QxTdMessageForwardInfo> m_forwardInfo;
-    QScopedPointer<QxTdMessageInteractionInfo> m_interactionInfo;
+    std::unique_ptr<QxTdMessageForwardInfo> m_forwardInfo;
+    std::unique_ptr<QxTdMessageInteractionInfo> m_interactionInfo;
     qint64 m_replyInChatId;
     QxTdInt64 m_replyToMessageId;
     QxTdInt64 m_messageThreadId;
@@ -204,8 +204,8 @@ private:
     qint64 m_viaBotUserId;
     qint64 m_mediaAlbumId;
     QString m_restrictionReason;
-    QScopedPointer<QxTdMessageContent> m_content;
-    QScopedPointer<QxTdReplyMarkup> m_replyMarkup;
+    std::unique_ptr<QxTdMessageContent> m_content;
+    std::unique_ptr<QxTdReplyMarkup> m_replyMarkup;
 
     bool m_isEdited;
     bool m_isValid;

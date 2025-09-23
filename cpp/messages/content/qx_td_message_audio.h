@@ -25,8 +25,8 @@ signals:
 
 private:
     Q_DISABLE_COPY(QxTdMessageAudio)
-    QScopedPointer<QxTdAudio> m_audio;
-    QScopedPointer<QxTdFormattedText> m_caption;
+    std::unique_ptr<QxTdAudio> m_audio;
+    std::unique_ptr<QxTdFormattedText> m_caption;
 };
 
 #endif // QX_TD_MESSAGE_AUDIO_H

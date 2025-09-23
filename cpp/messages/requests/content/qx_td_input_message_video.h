@@ -1,8 +1,6 @@
 #ifndef QX_TD_INPUT_MESSAGE_VIDEO_H
 #define QX_TD_INPUT_MESSAGE_VIDEO_H
 
-#include <QScopedPointer>
-
 #include "../qx_td_input_message_content_attachment_caption.h"
 #include "qx_td_input_thumbnail.h"
 
@@ -23,8 +21,8 @@ private:
     qint32 m_width, m_height;
     QString m_caption;
     QJsonArray m_captionEntities;
-    QScopedPointer<QxTdMediaSizeExtractor> m_mediaSizeExtractor;
-    QScopedPointer<QxTdInputThumbnail> m_inputThumbnail;
+    std::unique_ptr<QxTdMediaSizeExtractor> m_mediaSizeExtractor;
+    std::unique_ptr<QxTdInputThumbnail> m_inputThumbnail;
 };
 
 #endif // QX_TD_INPUT_MESSAGE_VIDEO_H

@@ -44,8 +44,8 @@ private:
     qint32 m_height;
     QString m_fileName;
     QString m_mimeType;
-    QScopedPointer<QxTdThumbnail> m_thumbnail;
-    QScopedPointer<QxTdFile> m_video;
+    std::unique_ptr<QxTdThumbnail> m_thumbnail;
+    std::unique_ptr<QxTdFile> m_video;
 };
 
 #endif // QX_TD_VIDEO_H

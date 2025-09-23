@@ -11,11 +11,11 @@ QxTdMessageDocument::QxTdMessageDocument(QObject *parent)
 
 QxTdDocument *QxTdMessageDocument::document() const
 {
-    return m_document.data();
+    return m_document.get();
 }
 QxTdFormattedText *QxTdMessageDocument::caption() const
 {
-    return m_caption.data();
+    return m_caption.get();
 }
 void QxTdMessageDocument::unmarshalJson(const QJsonObject &json)
 {

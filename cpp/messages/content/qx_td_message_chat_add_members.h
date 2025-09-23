@@ -33,7 +33,7 @@ signals:
 
 private:
     void updateTypeText();
-    QScopedPointer<QxTdUsersSortFilterModel> m_model;
+    std::unique_ptr<QxTdUsersSortFilterModel> m_model;
     QList<qint64> m_member_user_ids;
     qint64 m_senderUserId;
 };

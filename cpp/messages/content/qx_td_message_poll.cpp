@@ -8,7 +8,7 @@ QxTdMessagePoll::QxTdMessagePoll(QObject *parent)
 }
 
 QxTdPoll* QxTdMessagePoll::poll() {
-    return m_poll.data();
+    return m_poll.get();
 }
 
 void QxTdMessagePoll::unmarshalJson(const QJsonObject &json)

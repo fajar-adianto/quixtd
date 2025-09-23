@@ -21,17 +21,17 @@ QxTdSettings::QxTdSettings(QObject *parent)
 
 QObject *QxTdSettings::qmlProxies() const
 {
-    return m_proxies.data();
+    return m_proxies.get();
 }
 
 QxTdObjectListModel<QxTdProxy> *QxTdSettings::proxies() const
 {
-    return m_proxies.data();
+    return m_proxies.get();
 }
 
 void QxTdSettings::addOrEditProxyServer(qint32 id, QString server, qint32 port, qint32 type, QString username, QString password, QString secret, bool httpOnly, bool enable)
 {
-    QScopedPointer<QxTdProxyType> typeObject;
+    std::unique_ptr<QxTdProxyType> typeObject;
     QxTdProxyType *proxyType = nullptr;
     switch(type) {
         case 0:
@@ -60,18 +60,18 @@ void QxTdSettings::addOrEditProxyServer(qint32 id, QString server, qint32 port, 
 
     QFuture<QxTdResponse> resp;
     if (id == -1) {
-        QScopedPointer<QxTdAddProxyRequest> req(new QxTdAddProxyRequest());
+        std::unique_ptr<QxTdAddProxyRequest> req(new QxTdAddProxyRequest());
         req->setServer(server);
         req->setPort(port);
-        req->setType(typeObject.data());
+        req->setType(typeObject.get());
         req->setEnable(enable);
         resp = req->sendAsync();
     } else {
-        QScopedPointer<QxTdEditProxyRequest> req(new QxTdEditProxyRequest());
+        std::unique_ptr<QxTdEditProxyRequest> req(new QxTdEditProxyRequest());
         req->setId(id);
         req->setServer(server);
         req->setPort(port);
-        req->setType(typeObject.data());
+        req->setType(typeObject.get());
         req->setEnable(enable);
         resp = req->sendAsync();
     }
@@ -84,7 +84,7 @@ void QxTdSettings::addOrEditProxyServer(qint32 id, QString server, qint32 port, 
 
 void QxTdSettings::deleteProxyServer(qint32 id)
 {
-    QScopedPointer<QxTdRemoveProxyRequest> req(new QxTdRemoveProxyRequest());
+    std::unique_ptr<QxTdRemoveProxyRequest> req(new QxTdRemoveProxyRequest());
     req->setId(id);
     QFuture<QxTdResponse> resp = req->sendAsync();
     qxAwait(resp);
@@ -100,7 +100,7 @@ void QxTdSettings::deleteProxyServer(qint32 id)
 
 void QxTdSettings::disableProxyServer()
 {
-    QScopedPointer<QxTdDisableProxyRequest> req(new QxTdDisableProxyRequest());
+    std::unique_ptr<QxTdDisableProxyRequest> req(new QxTdDisableProxyRequest());
     QFuture<QxTdResponse> resp = req->sendAsync();
     qxAwait(resp);
     if (resp.result().isError()) {
@@ -113,7 +113,7 @@ void QxTdSettings::disableProxyServer()
 
 void QxTdSettings::enableProxyServer(qint32 id)
 {
-    QScopedPointer<QxTdEnableProxyRequest> req(new QxTdEnableProxyRequest());
+    std::unique_ptr<QxTdEnableProxyRequest> req(new QxTdEnableProxyRequest());
     req->setId(id);
     QFuture<QxTdResponse> resp = req->sendAsync();
     qxAwait(resp);
@@ -127,7 +127,7 @@ void QxTdSettings::enableProxyServer(qint32 id)
 
 void QxTdSettings::fetchProxyServers()
 {
-    QScopedPointer<QxTdGetProxiesRequest> req(new QxTdGetProxiesRequest);
+    std::unique_ptr<QxTdGetProxiesRequest> req(new QxTdGetProxiesRequest);
     QFuture<QxTdResponse> resp = req->sendAsync();
     qxAwait(resp);
     if (resp.result().isError()) {
@@ -148,7 +148,7 @@ void QxTdSettings::handleProxyServers(const QJsonObject &json)
         if (!proxy) {
             proxy = new QxTdProxy(this);
             connect(proxy, &QxTdProxy::pingError, this, &QxTdSettings::proxyPingError);
-            m_proxies.data()->append(proxy);
+            m_proxies.get()->append(proxy);
         }       
         proxy->unmarshalJson(json);
     }

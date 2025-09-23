@@ -39,17 +39,17 @@ QString QxTdAnimation::mimeType() const
 
 QxTdThumbnail *QxTdAnimation::thumbnail() const
 {
-    return m_thumbnail.data();
+    return m_thumbnail.get();
 }
 
 QxTdMiniThumbnail *QxTdAnimation::miniThumbnail() const
 {
-    return m_minithumbnail.data();
+    return m_minithumbnail.get();
 }
 
 QxTdFile *QxTdAnimation::animation() const
 {
-    return m_animation.data();
+    return m_animation.get();
 }
 
 void QxTdAnimation::unmarshalJson(const QJsonObject &json)

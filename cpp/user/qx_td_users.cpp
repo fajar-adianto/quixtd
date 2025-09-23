@@ -67,13 +67,13 @@ QxTdUser *QxTdUsers::meMyself() const
 void QxTdUsers::addUser(const QString &userName, const QString &firstName, const QString &lastName)
 {
     qWarning() << "Trying to find and add user" << userName << firstName << lastName;
-    QScopedPointer<QxTdContact> newContact(new QxTdContact);
+    std::unique_ptr<QxTdContact> newContact(new QxTdContact);
     newContact->setPhoneNumber(userName);
     newContact->setFirstName(firstName);
     newContact->setLastName(lastName);
-    QScopedPointer<QxTdImportContactsRequest> importContactsReq(new QxTdImportContactsRequest());
+    std::unique_ptr<QxTdImportContactsRequest> importContactsReq(new QxTdImportContactsRequest());
     QList<QxTdContact *> contacts;
-    contacts.append(newContact.data());
+    contacts.append(newContact.get());
     importContactsReq->setContacts(contacts);
     QFuture<QxTdResponse> resp = importContactsReq->sendAsync();
     qxAwait(resp);
@@ -89,7 +89,7 @@ void QxTdUsers::addUser(const QString &userName, const QString &firstName, const
 }
 
 void QxTdUsers::addContact(const QString &phoneNumber, const QString &firstName, const QString &lastName, const qint64 userId) {
-    QScopedPointer<QxTdContact> newContact(new QxTdContact);
+    std::unique_ptr<QxTdContact> newContact(new QxTdContact);
     newContact->setPhoneNumber(phoneNumber);
     newContact->setFirstName(firstName);
     newContact->setLastName(lastName);
@@ -105,7 +105,7 @@ void QxTdUsers::deleteUser(const int &userId)
 {
     QList<qint64> deleteUserIds;
     deleteUserIds.append(userId);
-    QScopedPointer<QxTdRemoveContactsRequest> deleteUserReq(new QxTdRemoveContactsRequest);
+    std::unique_ptr<QxTdRemoveContactsRequest> deleteUserReq(new QxTdRemoveContactsRequest);
     deleteUserReq->setUserIds(deleteUserIds);
     QFuture<QxTdResponse> resp = deleteUserReq->sendAsync();
     qxAwait(resp);
@@ -117,7 +117,7 @@ void QxTdUsers::deleteUser(const int &userId)
 }
 
 void QxTdUsers::blockUser(const qint64 userId) {
-    QScopedPointer<QxTdBlockUserRequest> req(new QxTdBlockUserRequest);
+    std::unique_ptr<QxTdBlockUserRequest> req(new QxTdBlockUserRequest);
     req->setUserId(userId);
     req->sendAsync();
 }
@@ -159,7 +159,7 @@ void QxTdUsers::handleUpdateUserStatus(const QString &userId, const QJsonObject 
 
 void QxTdUsers::getAllContacts()
 {
-    QScopedPointer<QxTdGetContactsRequest> req(new QxTdGetContactsRequest);
+    std::unique_ptr<QxTdGetContactsRequest> req(new QxTdGetContactsRequest);
     QFuture<QxTdResponse> resp = req->sendAsync();
     qxAwait(resp);
     if (resp.result().isError()) {
@@ -188,7 +188,7 @@ void QxTdUsers::handleAuthStateChanged(const QxTdAuthState *state)
 void QxTdUsers::handleContacts(const QJsonObject &contacts)
 {
     const QJsonArray contactlist = contacts["user_ids"].toArray();
-    QScopedPointer<QxTdGetUserRequest> getUserReq(new QxTdGetUserRequest);
+    std::unique_ptr<QxTdGetUserRequest> getUserReq(new QxTdGetUserRequest);
     m_contact_ids.clear();
     for (const QJsonValue &contact : contactlist) {
         qint64 contactId = contact.toVariant().toLongLong();

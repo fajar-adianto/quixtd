@@ -11,11 +11,11 @@ QxTdMessageVideo::QxTdMessageVideo(QObject *parent)
 
 QxTdVideo *QxTdMessageVideo::video() const
 {
-    return m_video.data();
+    return m_video.get();
 }
 QxTdFormattedText *QxTdMessageVideo::caption() const
 {
-    return m_caption.data();
+    return m_caption.get();
 }
 void QxTdMessageVideo::unmarshalJson(const QJsonObject &json)
 {

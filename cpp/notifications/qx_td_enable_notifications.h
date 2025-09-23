@@ -36,7 +36,7 @@ private:
     QString m_token;
     QMutex threadLocker;
     QFutureWatcher<QxTdResponse> m_watcher;
-    QScopedPointer<QThread> m_registrationThread;
+    std::unique_ptr<QThread> m_registrationThread;
 
 };
 

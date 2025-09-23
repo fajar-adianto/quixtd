@@ -1,7 +1,6 @@
 #ifndef QX_TD_KEYBOARD_BUTTON_H
 #define QX_TD_KEYBOARD_BUTTON_H
 
-#include <QScopedPointer>
 #include <QJsonArray>
 
 #include "qx_td_keyboard_button_type.h"
@@ -32,7 +31,7 @@ signals:
 
 private:
     QString m_text;
-    QScopedPointer<QxTdKeyboardButtonType> m_type;
+    std::unique_ptr<QxTdKeyboardButtonType> m_type;
 };
 
 /**
@@ -55,7 +54,7 @@ signals:
     void rowChanged();
 
 private:
-    QScopedPointer<QxTdObjectListModel<QxTdKeyboardButton>> m_row;
+    std::unique_ptr<QxTdObjectListModel<QxTdKeyboardButton>> m_row;
 };
 
 #endif // QX_TD_KEYBOARD_BUTTON_H

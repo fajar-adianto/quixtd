@@ -17,7 +17,7 @@ class QxTdSetChatDraftRequest : public QxTdRequest
     Q_OBJECT
     Q_DISABLE_COPY(QxTdSetChatDraftRequest)
     qint64 m_chatId;
-    QScopedPointer<QxTdDraftMessage> m_draftMessage;
+    std::unique_ptr<QxTdDraftMessage> m_draftMessage;
 
 public:
     explicit QxTdSetChatDraftRequest(QObject *parent = nullptr);

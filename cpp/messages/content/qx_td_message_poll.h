@@ -23,7 +23,7 @@ signals:
 
 private:
     Q_DISABLE_COPY(QxTdMessagePoll)
-    QScopedPointer<QxTdPoll> m_poll;
+    std::unique_ptr<QxTdPoll> m_poll;
 };
 
 #endif // QX_TD_MESSAGE_POLL_H

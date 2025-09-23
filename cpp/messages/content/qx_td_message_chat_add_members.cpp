@@ -16,7 +16,7 @@ QxTdMessageChatAddMembers::QxTdMessageChatAddMembers(QObject *parent)
 
 QObject *QxTdMessageChatAddMembers::members() const
 {
-    return m_model.data();
+    return m_model.get();
 }
 
 QList<qint64> QxTdMessageChatAddMembers::memberUserIds() const
@@ -44,7 +44,7 @@ void QxTdMessageChatAddMembers::unmarshalJson(const QJsonObject &json)
 {
     QxTdMessageContent::unmarshalJson(json);
     const QJsonArray ids = json["member_user_ids"].toArray();
-    QScopedPointer<QxTdGetUserRequest> request(new QxTdGetUserRequest);
+    std::unique_ptr<QxTdGetUserRequest> request(new QxTdGetUserRequest);
     for (const QJsonValue &val : ids) {
         m_member_user_ids << val.toVariant().toLongLong();
     }
@@ -55,7 +55,7 @@ void QxTdMessageChatAddMembers::unmarshalJson(const QJsonObject &json)
     for (const qint64 &id : m_member_user_ids) {
         const QxTdUser *user = QxTdUsers::instance()->model()->getByUid(QString::number(id));
         if (!user) {
-            QScopedPointer<QxTdGetUserRequest> req(new QxTdGetUserRequest);
+            std::unique_ptr<QxTdGetUserRequest> req(new QxTdGetUserRequest);
             req->setUserId(id);
             /**
              * We don't need to wait on a response as it will make its

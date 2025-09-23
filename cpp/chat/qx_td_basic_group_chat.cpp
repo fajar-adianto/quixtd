@@ -41,7 +41,7 @@ qint32 QxTdBasicGroupChat::memberCount() const
 
 QxTdChatMemberStatus *QxTdBasicGroupChat::status() const
 {
-    return m_status.data();
+    return m_status.get();
 }
 
 bool QxTdBasicGroupChat::isActive() const
@@ -87,7 +87,7 @@ QString QxTdBasicGroupChat::inviteLink() const
 void QxTdBasicGroupChat::unmarshalJson(const QJsonObject &json)
 {
     QxTdChat::unmarshalJson(json);
-    if (m_status.isNull()) {
+    if (m_status == nullptr) {
         requestGroupData();
     }
 }

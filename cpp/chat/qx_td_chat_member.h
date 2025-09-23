@@ -2,8 +2,8 @@
 #define QX_TD_CHAT_MEMBER_H
 
 #include <QObject>
-#include <QScopedPointer>
 #include <QDateTime>
+
 #include "messages/qx_td_message_sender.h"
 #include "qx_td_chat_member_status.h"
 
@@ -41,10 +41,10 @@ signals:
 
 private:
     Q_DISABLE_COPY(QxTdChatMember)
-    QScopedPointer<QxTdMessageSender> m_memberId;
+    std::unique_ptr<QxTdMessageSender> m_memberId;
     QxTdInt64 m_inviteUserId;
     QxTdInt32 m_joinedChatDate;
-    QScopedPointer<QxTdChatMemberStatus> m_status;
+    std::unique_ptr<QxTdChatMemberStatus> m_status;
 };
 
 #endif // QX_TD_CHAT_MEMBER_H

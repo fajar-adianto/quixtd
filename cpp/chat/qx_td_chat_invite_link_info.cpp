@@ -38,7 +38,7 @@ QString QxTdChatInviteLinkInfo::qmlChatId() const
 
 QxTdChatType *QxTdChatInviteLinkInfo::type() const
 {
-    return m_type.data();
+    return m_type.get();
 }
 
 QString QxTdChatInviteLinkInfo::title() const
@@ -48,7 +48,7 @@ QString QxTdChatInviteLinkInfo::title() const
 
 QxTdChatPhoto *QxTdChatInviteLinkInfo::photo() const
 {
-    return m_photo.data();
+    return m_photo.get();
 }
 
 qint32 QxTdChatInviteLinkInfo::memberCount() const
@@ -72,7 +72,7 @@ QString QxTdChatInviteLinkInfo::highlightedMemberCount() const
 
 QxTdObjectListModel<QxTdUser> *QxTdChatInviteLinkInfo::memberUsers() const
 {
-    return m_memberUsers.data();
+    return m_memberUsers.get();
 }
 
 bool QxTdChatInviteLinkInfo::isPublic() const

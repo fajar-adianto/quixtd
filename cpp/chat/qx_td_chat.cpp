@@ -1,6 +1,5 @@
 #include "utils/qx_td_translate_tools.h"
 #include "qx_td_chat.h"
-#include <QDebug>
 #include <QJsonArray>
 #include "qx_td_chat_type_factory.h"
 #include "qx_td_chat_action_factory.h"
@@ -45,7 +44,7 @@ QxTdChat::QxTdChat(QObject *parent)
     connect(QxTdClient::instance(), &QxTdClient::updateChatActionBar, this, &QxTdChat::handleUpdateChatActionBar);
     connect(QxTdClient::instance(), &QxTdClient::updateChatIsBlocked, this, &QxTdChat::handleUpdateChatIsBlocked);
     connect(QxTdClient::instance(), &QxTdClient::foundChatMessages, this, &QxTdChat::handleFoundChatMessages);
-    connect(m_lastMessage.data(), &QxTdMessage::senderChanged, this, &QxTdChat::summaryChanged);
+    connect(m_lastMessage.get(), &QxTdMessage::senderChanged, this, &QxTdChat::summaryChanged);
     emit messagesChanged();
 }
 
@@ -58,7 +57,7 @@ void QxTdChat::unmarshalJson(const QJsonObject &json)
     updateChatBlocked(json);
 
     m_chatType.reset(QxTdChatFactory::createType(json["type"].toObject(), this));
-    emit chatTypeChanged(m_chatType.data());
+    emit chatTypeChanged(m_chatType.get());
 
     updateChatActionBar(json["action_bar"].toObject());
     updateChatPosition(json);
@@ -94,12 +93,12 @@ QString QxTdChat::title() const
 
 QxTdMessage *QxTdChat::lastMessage() const
 {
-    return m_lastMessage.data();
+    return m_lastMessage.get();
 }
 
 QxTdChatPhoto *QxTdChat::chatPhoto() const
 {
-    return m_chatPhoto.data();
+    return m_chatPhoto.get();
 }
 
 QString QxTdChat::initials() const
@@ -115,9 +114,9 @@ QString QxTdChat::avatarColor(qint64 userId)
 void QxTdChat::sendChatAction(bool isTyping)
 {
     //TODO: Make more actions available
-    QScopedPointer<QxTdSendChatActionRequest> req(new QxTdSendChatActionRequest);
+    std::unique_ptr<QxTdSendChatActionRequest> req(new QxTdSendChatActionRequest);
     req->setChatId(id());
-    QxTdClient::instance()->send(req.data());
+    QxTdClient::instance()->send(req.get());
 }
 
 bool QxTdChat::isMuted() const
@@ -127,12 +126,12 @@ bool QxTdChat::isMuted() const
 
 bool QxTdChat::isPrivate() const
 {
-    return qobject_cast<QxTdChatTypePrivate *>(m_chatType.data()) != nullptr;
+    return qobject_cast<QxTdChatTypePrivate *>(m_chatType.get()) != nullptr;
 }
 
 bool QxTdChat::isSecret() const
 {
-    return qobject_cast<QxTdChatTypeSecret *>(m_chatType.data()) != nullptr;
+    return qobject_cast<QxTdChatTypeSecret *>(m_chatType.get()) != nullptr;
 }
 
 bool QxTdChat::isGroup() const
@@ -142,18 +141,18 @@ bool QxTdChat::isGroup() const
 
 bool QxTdChat::isBasicGroup() const
 {
-    return qobject_cast<QxTdChatTypeBasicGroup *>(m_chatType.data()) != nullptr;
+    return qobject_cast<QxTdChatTypeBasicGroup *>(m_chatType.get()) != nullptr;
 }
 
 bool QxTdChat::isSuperGroup() const
 {
-    auto result = qobject_cast<QxTdChatTypeSuperGroup *>(m_chatType.data());
+    auto result = qobject_cast<QxTdChatTypeSuperGroup *>(m_chatType.get());
     return result != nullptr && !result->isChannel();
 }
 
 bool QxTdChat::isChannel() const
 {
-    auto result = qobject_cast<QxTdChatTypeSuperGroup *>(m_chatType.data());
+    auto result = qobject_cast<QxTdChatTypeSuperGroup *>(m_chatType.get());
     return result != nullptr && result->isChannel();
 }
 
@@ -179,7 +178,7 @@ bool QxTdChat::isPinned() const
 
 bool QxTdChat::isBot() const {
     if (isPrivate()) {
-        auto userChatType = qobject_cast<QxTdChatTypePrivate *>(m_chatType.data());
+        auto userChatType = qobject_cast<QxTdChatTypePrivate *>(m_chatType.get());
         if (userChatType->user()->isBot()) {
             return true;
         }
@@ -268,7 +267,7 @@ qint64 QxTdChat::replyMarkupMessageId() const
 
 QxTdMessage *QxTdChat::replyMarkupMessage() const
 {
-    return m_replyMarkupMessage.data();
+    return m_replyMarkupMessage.get();
 }
 
 bool QxTdChat::hasReplyMarkup() const
@@ -281,7 +280,7 @@ void QxTdChat::loadReplyMarkupMessage()
     if (!hasReplyMarkup()) {
         return;
     }
-    QScopedPointer<QxTdGetMessageRequest> req(new QxTdGetMessageRequest);
+    std::unique_ptr<QxTdGetMessageRequest> req(new QxTdGetMessageRequest);
     req->setChatId(id());
     req->setMessageId(m_replyMarkupMessageId.value());
     QFuture<QxTdResponse> resp = req->sendAsync();
@@ -297,11 +296,11 @@ void QxTdChat::loadReplyMarkupMessage()
 
 QxTdNotificationSettings *QxTdChat::notificationSettings() const
 {
-    return m_notifySettings.data();
+    return m_notifySettings.get();
 }
 QxTdChatPosition *QxTdChat::position() const
 {
-    return m_position.data();
+    return m_position.get();
 }
 
 QString QxTdChat::action() const
@@ -343,7 +342,7 @@ QString QxTdChat::action() const
 
 QxTdUser *QxTdChat::user() const {
     if (isPrivate() || isSecret()) {
-        auto userChatType = qobject_cast<QxTdChatTypePrivate *>(m_chatType.data());
+        auto userChatType = qobject_cast<QxTdChatTypePrivate *>(m_chatType.get());
         return userChatType->user();
     }
     return nullptr;
@@ -396,9 +395,9 @@ void QxTdChat::openChat()
 {
     m_chatOpen = true;
     emit isOpenChanged();
-    QScopedPointer<QxTdOpenChatRequest> req(new QxTdOpenChatRequest);
+    std::unique_ptr<QxTdOpenChatRequest> req(new QxTdOpenChatRequest);
     req->setChatId(id());
-    QxTdClient::instance()->send(req.data());
+    QxTdClient::instance()->send(req.get());
     onChatOpened();
     QxTdChat::loadReplyMarkupMessage();
 }
@@ -406,9 +405,9 @@ void QxTdChat::openChat()
 void QxTdChat::closeChat()
 {
     m_chatOpen = false;
-    QScopedPointer<QxTdCloseChatRequest> req(new QxTdCloseChatRequest);
+    std::unique_ptr<QxTdCloseChatRequest> req(new QxTdCloseChatRequest);
     req->setChatId(id());
-    QxTdClient::instance()->send(req.data());
+    QxTdClient::instance()->send(req.get());
     m_currentMessageIndex = -1;
     m_foundMessages = QList<QString>();
     m_nextFromMessageId = "0";
@@ -423,9 +422,9 @@ void QxTdChat::closeChat()
 void QxTdChat::setTitle(const QString &title)
 {
     if (m_title != title) {
-        QScopedPointer<QxTdSetChatTitleRequest> req(new QxTdSetChatTitleRequest);
+        std::unique_ptr<QxTdSetChatTitleRequest> req(new QxTdSetChatTitleRequest);
         req->setTitle(id(), title);
-        QxTdClient::instance()->send(req.data());
+        QxTdClient::instance()->send(req.get());
     }
 }
 
@@ -436,25 +435,25 @@ void QxTdChat::deleteChatHistory(const bool &removeFromChatlist, const bool &for
         return;
     }
     if (isSecret()) {
-        auto secretChatType = qobject_cast<QxTdChatTypeSecret *>(m_chatType.data());
-        QScopedPointer<QxTdCloseSecretChatRequest>
+        auto secretChatType = qobject_cast<QxTdChatTypeSecret *>(m_chatType.get());
+        std::unique_ptr<QxTdCloseSecretChatRequest>
                 req(new QxTdCloseSecretChatRequest);
         req->setSecretChatId(secretChatType->secretChatId());
-        QxTdClient::instance()->send(req.data());
+        QxTdClient::instance()->send(req.get());
     }
-    QScopedPointer<QxTdDeleteChatHistoryRequest> req(new QxTdDeleteChatHistoryRequest);
+    std::unique_ptr<QxTdDeleteChatHistoryRequest> req(new QxTdDeleteChatHistoryRequest);
     req->setChatId(id());
     req->setRemoveFromChatList(removeFromChatlist);
     req->setRevoke(forAllUsers);
-    QxTdClient::instance()->send(req.data());
+    QxTdClient::instance()->send(req.get());
 }
 
 void QxTdChat::leaveSecretChat() {
     if (m_chatType->type() == QxTdChat::CHAT_TYPE_SECRET) {
-        QScopedPointer<QxTdCloseSecretChatRequest> req(new QxTdCloseSecretChatRequest);
+        std::unique_ptr<QxTdCloseSecretChatRequest> req(new QxTdCloseSecretChatRequest);
         auto c = static_cast<QxTdSecretChat *>(this);
         req->setSecretChatId(c->secretChatId());
-        QxTdClient::instance()->send(req.data());
+        QxTdClient::instance()->send(req.get());
     }
 }
 
@@ -472,7 +471,7 @@ void QxTdChat::leaveChat()
      * Supergroups and basicgroups can be left using the id()
      * Strangely it takes the id and not superGroupId and basicGroupId
      */
-    QScopedPointer<QxTdLeaveChatRequest> req(new QxTdLeaveChatRequest);
+    std::unique_ptr<QxTdLeaveChatRequest> req(new QxTdLeaveChatRequest);
     switch (m_chatType->type()) {
     case QxTdChat::CHAT_TYPE_PRIVATE:
         return deleteChatHistory(true);
@@ -488,7 +487,7 @@ void QxTdChat::leaveChat()
     default:
         break;
     }
-    QxTdClient::instance()->send(req.data());
+    QxTdClient::instance()->send(req.get());
     QxTdChatListModel::instance()->model()->remove(this);
 }
 
@@ -537,7 +536,7 @@ void QxTdChat::updateChatPositions(const QJsonObject &json)
 void QxTdChat::updateChatPhoto(const QJsonObject &photo)
 {
     m_chatPhoto->unmarshalJson(photo);
-    emit chatPhotoChanged(m_chatPhoto.data());
+    emit chatPhotoChanged(m_chatPhoto.get());
 
     if (m_chatPhoto->small()->local()->path().isEmpty()) {
         connect(m_chatPhoto->small()->local(), &QxTdLocalFile::pathChanged, this, &QxTdChat::handleChatPhotoDownloaded);
@@ -606,7 +605,7 @@ void QxTdChat::updateLastMessage(const QJsonObject &json)
     } else {
         m_lastMessage->unmarshalJson(json);
     }
-    emit lastMessageChanged(m_lastMessage.data());
+    emit lastMessageChanged(m_lastMessage.get());
     emit summaryChanged();
 }
 
@@ -661,12 +660,12 @@ void QxTdChat::forwardMessage(const QString &messageId)
 }
 
 void QxTdChat::mute(const qint32 &duration) {
-    QScopedPointer<QxTdSetChatNotificationSettings> req(new QxTdSetChatNotificationSettings);
-    req->setNotificationSettings(m_notifySettings.data());
+    std::unique_ptr<QxTdSetChatNotificationSettings> req(new QxTdSetChatNotificationSettings);
+    req->setNotificationSettings(m_notifySettings.get());
     req->setChatId(id());
     m_notifySettings->setMuteFor(duration);
     m_notifySettings->setUseDefaultMuteFor(false);
-    QxTdClient::instance()->send(req.data());
+    QxTdClient::instance()->send(req.get());
 }
 
 void QxTdChat::updateChatAction(const QJsonObject &json)
@@ -692,7 +691,7 @@ void QxTdChat::updateChatActionBar(const QJsonObject &json)
 
 QxTdChatType *QxTdChat::chatType() const
 {
-    return m_chatType.data();
+    return m_chatType.get();
 }
 
 QxTdChatPhoto::QxTdChatPhoto(QObject *parent)
@@ -719,13 +718,13 @@ void QxTdChat::positionMessageListViewAtIndex(int index)
 
 QxTdDraftMessage *QxTdChat::draftMessage() const
 {
-    return m_draftMessage.data();
+    return m_draftMessage.get();
 }
 
 QString QxTdChat::smallPhotoPath() const
 {
     if (isPrivate() || isSecret() ) {
-        auto userChatType = qobject_cast<QxTdChatTypePrivate *>(m_chatType.data());
+        auto userChatType = qobject_cast<QxTdChatTypePrivate *>(m_chatType.get());
         if (userChatType->user()->isDeleted()) {
             return "image://theme/account";
         }
@@ -734,11 +733,11 @@ QString QxTdChat::smallPhotoPath() const
 }
 
 bool QxTdChat::hasChatActionBar() const {
-    return !m_chatActionBar.isNull();
+    return (m_chatActionBar != nullptr);
 }
 
 QxTdChatActionBar *QxTdChat::chatActionBar() const {
-    return m_chatActionBar.data();
+    return m_chatActionBar.get();
 }
 
 void QxTdChat::setFoundMessages(QList<QString> foundMessages) {

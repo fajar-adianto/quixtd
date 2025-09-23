@@ -59,7 +59,7 @@ qint32 QxTdSuperGroupChat::date() const
 
 QxTdChatMemberStatus *QxTdSuperGroupChat::status() const
 {
-    return m_status.data();
+    return m_status.get();
 }
 
 QString QxTdSuperGroupChat::qmlMemberCount() const
@@ -93,7 +93,7 @@ bool QxTdSuperGroupChat::isWritable() const
     switch (statusType) {
         case QxTdObject::Type::CHAT_MEMBER_STATUS_ADMIN: {
             if (m_isChannel) {
-                auto adminStatus = qobject_cast<QxTdChatMemberStatusAdministrator *>(m_status.data());
+                auto adminStatus = qobject_cast<QxTdChatMemberStatusAdministrator *>(m_status.get());
                 if (adminStatus->rights())
                     return adminStatus->rights()->canPostMessages();
                 else
@@ -102,7 +102,7 @@ bool QxTdSuperGroupChat::isWritable() const
             return true;
         }
         case QxTdObject::Type::CHAT_MEMBER_STATUS_CREATOR: {
-            auto creatorStatus = qobject_cast<QxTdChatMemberStatusCreator *>(m_status.data());
+            auto creatorStatus = qobject_cast<QxTdChatMemberStatusCreator *>(m_status.get());
             return creatorStatus->isMember();
         }
         case QxTdObject::Type::CHAT_MEMBER_STATUS_BANNED:
@@ -113,7 +113,7 @@ bool QxTdSuperGroupChat::isWritable() const
             return !m_isChannel;
         }
         case QxTdObject::Type::CHAT_MEMBER_STATUS_RESTRICTED: {
-            auto restrictedStatus = qobject_cast<QxTdChatMemberStatusRestricted *>(m_status.data());
+            auto restrictedStatus = qobject_cast<QxTdChatMemberStatusRestricted *>(m_status.get());
             if (restrictedStatus->permissions()) {
                 return restrictedStatus->isMember() && restrictedStatus->permissions()->canSendMessages();
             }
@@ -230,7 +230,7 @@ void QxTdSuperGroupChat::getSuperGroupFullInfo()
     if (m_sgId.value() == 0) {
         parseSuperGroupId();
     }
-    QScopedPointer<QxTdGetSuperGroupFullInfoRequest> req(new QxTdGetSuperGroupFullInfoRequest);
+    std::unique_ptr<QxTdGetSuperGroupFullInfoRequest> req(new QxTdGetSuperGroupFullInfoRequest);
     req->setSupergroupId(superGroupId());
     QFuture<QxTdResponse> resp = req->sendAsync();
     qxAwait(resp);
@@ -246,9 +246,9 @@ void QxTdSuperGroupChat::getSuperGroupData()
     if (m_sgId.value() == 0) {
         parseSuperGroupId();
     }
-    QScopedPointer<QxTdGetSuperGroupRequest> req(new QxTdGetSuperGroupRequest);
+    std::unique_ptr<QxTdGetSuperGroupRequest> req(new QxTdGetSuperGroupRequest);
     req->setSuperGroupId(superGroupId());
-    QxTdClient::instance()->send(req.data());
+    QxTdClient::instance()->send(req.get());
 }
 
 void QxTdSuperGroupChat::updateSuperGroup(const QJsonObject &json)

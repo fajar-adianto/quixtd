@@ -19,7 +19,7 @@ qint64 QxTdDraftMessage::replyToMessageId() const
 
 QxTdInputMessageText *QxTdDraftMessage::inputMessageText() const
 {
-    return m_inputMessageText.data();
+    return m_inputMessageText.get();
 }
 
 void QxTdDraftMessage::unmarshalJson(const QJsonObject &json)

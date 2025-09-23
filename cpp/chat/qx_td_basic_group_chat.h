@@ -56,7 +56,7 @@ private:
     Q_DISABLE_COPY(QxTdBasicGroupChat)
     QxTdInt64 m_groupId;
     QxTdInt32 m_memberCount;
-    QScopedPointer<QxTdChatMemberStatus> m_status;
+    std::unique_ptr<QxTdChatMemberStatus> m_status;
     bool m_isActive;
     QxTdInt64 m_upgradedSGID;
     QxTdInt64 m_creatorId;

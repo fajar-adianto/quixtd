@@ -1,6 +1,5 @@
 #include "qx_td_file.h"
-#include <QDebug>
-#include <QScopedPointer>
+
 #include "client/qx_td_client.h"
 #include "files/qx_td_download_file_request.h"
 
@@ -37,12 +36,12 @@ QString QxTdFile::qmlExpectedSize() const
 
 QxTdLocalFile *QxTdFile::local() const
 {
-    return m_local.data();
+    return m_local.get();
 }
 
 QxTdRemoteFile *QxTdFile::remote() const
 {
-    return m_remote.data();
+    return m_remote.get();
 }
 
 void QxTdFile::unmarshalJson(const QJsonObject &json)
@@ -60,10 +59,10 @@ void QxTdFile::downloadFile()
     if (!m_local->canBeDownloaded()) {
         return;
     }
-    QScopedPointer<QxTdDownloadFileRequest> req(new QxTdDownloadFileRequest);
+    std::unique_ptr<QxTdDownloadFileRequest> req(new QxTdDownloadFileRequest);
     req->setFileId(this->id());
     req->setPriority(QxTdDownloadFileRequest::Priority::Medium);
-    QxTdClient::instance()->send(req.data());
+    QxTdClient::instance()->send(req.get());
 }
 
 void QxTdFile::handleUpdateFile(const QJsonObject &json)

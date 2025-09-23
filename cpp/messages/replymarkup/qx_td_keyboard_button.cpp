@@ -22,7 +22,7 @@ void QxTdKeyboardButton::unmarshalJson(const QJsonObject &json)
 
 QxTdKeyboardButtonType *QxTdKeyboardButton::type() const
 {
-    return m_type.data();
+    return m_type.get();
 }
 
 QxTdKeyboardRow::QxTdKeyboardRow(QObject *parent)
@@ -33,7 +33,7 @@ QxTdKeyboardRow::QxTdKeyboardRow(QObject *parent)
 
 QObject *QxTdKeyboardRow::row() const
 {
-    return m_row.data();
+    return m_row.get();
 }
 
 void QxTdKeyboardRow::unmarshalJson(const QJsonValue &json)

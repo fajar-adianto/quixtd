@@ -12,7 +12,7 @@ QxTdChatPosition::QxTdChatPosition(QObject *parent)
 
 QxTdChatList *QxTdChatPosition::list() const
 {
-    return m_list.data();
+    return m_list.get();
 }
 
 QString QxTdChatPosition::qmlOrder() const

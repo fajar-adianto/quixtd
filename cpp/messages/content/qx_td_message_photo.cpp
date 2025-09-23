@@ -11,11 +11,11 @@ QxTdMessagePhoto::QxTdMessagePhoto(QObject *parent)
 
 QxTdPhotos *QxTdMessagePhoto::photo() const
 {
-    return m_photo.data();
+    return m_photo.get();
 }
 QxTdFormattedText *QxTdMessagePhoto::caption() const
 {
-    return m_caption.data();
+    return m_caption.get();
 }
 void QxTdMessagePhoto::unmarshalJson(const QJsonObject &json)
 {

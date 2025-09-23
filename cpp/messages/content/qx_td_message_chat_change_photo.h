@@ -26,7 +26,7 @@ signals:
     void contentChanged();
 
 private:
-    QScopedPointer<QxTdPhotos> m_photo;
+    std::unique_ptr<QxTdPhotos> m_photo;
 };
 
 #endif // QX_TD_MESSAGE_CHAT_CHANGE_PHOTO_H

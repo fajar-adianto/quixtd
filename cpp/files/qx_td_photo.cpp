@@ -10,12 +10,12 @@ QxTdPhoto::QxTdPhoto(QObject *parent)
 
 QxTdFile *QxTdPhoto::small() const
 {
-    return m_small.data();
+    return m_small.get();
 }
 
 QxTdFile *QxTdPhoto::big() const
 {
-    return m_big.data();
+    return m_big.get();
 }
 
 QString QxTdPhoto::smallPhotoPath() {
@@ -30,9 +30,9 @@ void QxTdPhoto::unmarshalJson(const QJsonObject &json)
     QxTdObject::unmarshalJson(json);
     if (!json.isEmpty()) {
         m_small->unmarshalJson(json["small"].toObject());
-        emit smallChanged(m_small.data());
+        emit smallChanged(m_small.get());
         m_big->unmarshalJson(json["big"].toObject());
-        emit bigChanged(m_big.data());
+        emit bigChanged(m_big.get());
     }
 
 }

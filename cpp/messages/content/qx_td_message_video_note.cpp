@@ -11,7 +11,7 @@ QxTdMessageVideoNote::QxTdMessageVideoNote(QObject *parent)
 
 QxTdVideoNote *QxTdMessageVideoNote::videoNote() const
 {
-    return m_videoNote.data();
+    return m_videoNote.get();
 }
 bool QxTdMessageVideoNote::isViewed() const
 {

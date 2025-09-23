@@ -40,7 +40,7 @@ private:
     Q_DISABLE_COPY(QxTdPollTypeQuiz)
 
     qint32 m_correctOption;
-    QScopedPointer<QxTdFormattedText> m_explanation;
+    std::unique_ptr<QxTdFormattedText> m_explanation;
 };
 
 class QxTdPollTypeRegular : public QxTdPollType

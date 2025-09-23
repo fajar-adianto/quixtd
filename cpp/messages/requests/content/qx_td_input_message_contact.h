@@ -16,7 +16,7 @@ public:
     QxTdContact *contact();
 
 private:
-    QScopedPointer<QxTdContact> m_contact;
+    std::unique_ptr<QxTdContact> m_contact;
     Q_DISABLE_COPY(QxTdInputMessageContact)
 };
 

@@ -1,7 +1,5 @@
 #include "qx_td_chat_list_model.h"
-#include <QScopedPointer>
-#include <QList>
-#include <QVariant>
+
 #include "client/qx_td_client.h"
 #include "chat/requests/qx_td_load_chats_request.h"
 #include "chat/requests/qx_td_create_new_secret_chat_request.h"
@@ -26,6 +24,9 @@
 #include "utils/qx_td_translate_tools.h"
 #include "chat/qx_td_chat_type_factory.h"
 #include "qx_td_secret_chat.h"
+
+#include <QList>
+#include <QVariant>
 
 QPointer<QxTdChatListModel> QxTdChatListModel::s_chatlistmodel;
 
@@ -98,7 +99,7 @@ void QxTdChatListModel::createOrOpenSecretChat(const qint64 &userId)
         }
     }
     if (chatId == 0) {
-        QScopedPointer<QxTdCreateNewSecretChatRequest> req(new QxTdCreateNewSecretChatRequest);
+        std::unique_ptr<QxTdCreateNewSecretChatRequest> req(new QxTdCreateNewSecretChatRequest);
         req->setUserId(userId);
         QFuture<QxTdResponse> resp = req->sendAsync();
         qxAwait(resp);
@@ -116,7 +117,7 @@ void QxTdChatListModel::createOrOpenSecretChat(const qint64 &userId)
 
 void QxTdChatListModel::createOrOpenPrivateChat(const qint64 &userId)
 {
-    QScopedPointer<QxTdCreatePrivateChatRequest> req(new QxTdCreatePrivateChatRequest);
+    std::unique_ptr<QxTdCreatePrivateChatRequest> req(new QxTdCreatePrivateChatRequest);
     req->setUserId(userId);
     QFuture<QxTdResponse> resp = req->sendAsync();
     qxAwait(resp);
@@ -141,7 +142,7 @@ void QxTdChatListModel::setCurrentChatById(const qint64 &chatId)
 void QxTdChatListModel::setCurrentChatByUsername(const QString &username)
 {
     qDebug() << "OPENING CHAT" << username;
-    QScopedPointer<QxTdSearchPublicChatRequest> req(new QxTdSearchPublicChatRequest);
+    std::unique_ptr<QxTdSearchPublicChatRequest> req(new QxTdSearchPublicChatRequest);
     req->setChatUsername(username);
     QFuture<QxTdResponse> resp = req->sendAsync();
     qxAwait(resp);
@@ -157,7 +158,7 @@ void QxTdChatListModel::setCurrentChatByUsername(const QString &username)
 
 qint64 QxTdChatListModel::chatIdByUsername(const QString &username)
 {
-    QScopedPointer<QxTdSearchPublicChatRequest> req(new QxTdSearchPublicChatRequest);
+    std::unique_ptr<QxTdSearchPublicChatRequest> req(new QxTdSearchPublicChatRequest);
     req->setChatUsername(username);
     QFuture<QxTdResponse> resp = req->sendAsync();
     qxAwait(resp);
@@ -215,7 +216,7 @@ void QxTdChatListModel::setForwardingMessages(QStringList forwardingMessages)
 
 void QxTdChatListModel::handleChat(const QJsonObject &data)
 {
-    QScopedPointer<QxTdChat> chat(new QxTdChat);
+    std::unique_ptr<QxTdChat> chat(new QxTdChat);
     chat->unmarshalJson(data);
     handleUpdateNewChat(data);
 }
@@ -237,7 +238,7 @@ void QxTdChatListModel::handleChats(const QJsonObject &data)
         m_receivedChatIds.append(chatId);
         //Only request chats that we did not receive already
         if (!chatById(chatId)) {
-            QScopedPointer<QxTdGetChatRequest> chatReq(new QxTdGetChatRequest);
+            std::unique_ptr<QxTdGetChatRequest> chatReq(new QxTdGetChatRequest);
             chatReq->setChatId(chatId);
             qDebug() << "Request chat id" << chatId << "to be added to chatmodel";
             chatReq->sendAsync();
@@ -421,10 +422,10 @@ void QxTdChatListModel::sendForwardMessage(const QStringList &forwardMessageIds,
     QxTdInputMessageText *messageText = new QxTdInputMessageText();
     messageText->setText(message);
     messageText->setEntities(formatEntities);
-    QScopedPointer<QxTdForwardMessagesRequest> request(new QxTdForwardMessagesRequest);
+    std::unique_ptr<QxTdForwardMessagesRequest> request(new QxTdForwardMessagesRequest);
     request->setChatId(recievingChatId);
     request->setFromChatId(fromChatId);
-    QScopedPointer<QxTdSendMessageRequest> additionalTextMessagerequest(new QxTdSendMessageRequest);
+    std::unique_ptr<QxTdSendMessageRequest> additionalTextMessagerequest(new QxTdSendMessageRequest);
     additionalTextMessagerequest->setChatId(recievingChatId);
     additionalTextMessagerequest->setContent(messageText);
     QList<qint64> forwardingMessageIntIds;
@@ -432,9 +433,9 @@ void QxTdChatListModel::sendForwardMessage(const QStringList &forwardMessageIds,
         forwardingMessageIntIds.append(msgId.toLongLong());
     }
     request->setMessageIds(forwardingMessageIntIds);
-    QxTdClient::instance()->send(request.data());
+    QxTdClient::instance()->send(request.get());
     if (message != "") {
-        QxTdClient::instance()->send(additionalTextMessagerequest.data());
+        QxTdClient::instance()->send(additionalTextMessagerequest.get());
     }
 }
 
@@ -458,9 +459,9 @@ void QxTdChatListModel::togglePinChat(const qint64 &chatId, const bool &pinned)
     } else if (!pinned && chats.contains(chatId)) {
         chats.removeAll(chatId);
     }
-    QScopedPointer<QxTdSetPinnedChatsRequest> req(new QxTdSetPinnedChatsRequest);
+    std::unique_ptr<QxTdSetPinnedChatsRequest> req(new QxTdSetPinnedChatsRequest);
     req->setPinnedChats(chats);
-    QxTdClient::instance()->send(req.data());
+    QxTdClient::instance()->send(req.get());
 }
 
 void QxTdChatListModel::handleForwardingMessagesAction()
@@ -531,7 +532,7 @@ void QxTdChatListModel::setChatDraftMessage(const QString &draftText,
 
 void QxTdChatListModel::joinChat(const qint64 &chatId) const
 {
-    QScopedPointer<QxTdJoinChatRequest> req(new QxTdJoinChatRequest);
+    std::unique_ptr<QxTdJoinChatRequest> req(new QxTdJoinChatRequest);
     req->setChatId(chatId);
     QFuture<QxTdResponse> resp = req->sendAsync();
     qxAwait(resp);
@@ -547,7 +548,7 @@ void QxTdChatListModel::setChatToOpenOnUpdate(const qint64 &chatId)
 }
 
 void QxTdChatListModel::loadMoreChats(const QString &chatList) {
-    QScopedPointer<QxTdLoadChatsRequest> req(new QxTdLoadChatsRequest);
+    std::unique_ptr<QxTdLoadChatsRequest> req(new QxTdLoadChatsRequest);
 
     if (m_model->isEmpty()) {
         req->setChatList(chatList);
@@ -558,7 +559,7 @@ void QxTdChatListModel::loadMoreChats(const QString &chatList) {
 
 void QxTdChatListModel::checkChatInviteLink(const QString &inviteLink)
 {
-    QScopedPointer<QxTdCheckChatInviteLinkRequest> req(new QxTdCheckChatInviteLinkRequest);
+    std::unique_ptr<QxTdCheckChatInviteLinkRequest> req(new QxTdCheckChatInviteLinkRequest);
     req->setInviteLink(inviteLink);
     QFuture<QxTdResponse> resp = req->sendAsync();
     qxAwait(resp);
@@ -578,7 +579,7 @@ void QxTdChatListModel::checkChatInviteLink(const QString &inviteLink)
 void QxTdChatListModel::joinChatByInviteLink(const QString &inviteLink)
 {
     qDebug() << inviteLink;
-    QScopedPointer<QxTdJoinChatByInviteLinkRequest> req(new QxTdJoinChatByInviteLinkRequest);
+    std::unique_ptr<QxTdJoinChatByInviteLinkRequest> req(new QxTdJoinChatByInviteLinkRequest);
     req->setInviteLink(inviteLink);
     QFuture<QxTdResponse> resp = req->sendAsync();
     qxAwait(resp);
@@ -586,7 +587,7 @@ void QxTdChatListModel::joinChatByInviteLink(const QString &inviteLink)
     if (resp.result().isError()) {
         qWarning() << "Error during joining chat by invite link:" << resp.result().errorString();
     }
-    QScopedPointer<QxTdChat> chat(new QxTdChat);
+    std::unique_ptr<QxTdChat> chat(new QxTdChat);
     QJsonObject json = resp.result().json();
     chat->unmarshalJson(json);
     setChatToOpenOnUpdate(chat->id());
@@ -595,7 +596,7 @@ void QxTdChatListModel::joinChatByInviteLink(const QString &inviteLink)
 
 void QxTdChatListModel::openMessageContent(const QString chatId, const QString messageId)
 {
-    QScopedPointer<QxTdOpenMessageContentRequest> req(new QxTdOpenMessageContentRequest);
+    std::unique_ptr<QxTdOpenMessageContentRequest> req(new QxTdOpenMessageContentRequest);
     req->setChatId(chatId);
     req->setMessageId(messageId);
     QFuture<QxTdResponse> resp = req->sendAsync();
@@ -603,17 +604,17 @@ void QxTdChatListModel::openMessageContent(const QString chatId, const QString m
 
 void QxTdChatListModel::sendSetTTL(const QString &chatId, const int &ttl)
 {
-    QScopedPointer<QxTdSetChatMessageTtlRequest> req(new QxTdSetChatMessageTtlRequest);
+    std::unique_ptr<QxTdSetChatMessageTtlRequest> req(new QxTdSetChatMessageTtlRequest);
     req->setChatId(chatId.toLong());
     req->setTTL(ttl);
-    QxTdClient::instance()->send(req.data());
+    QxTdClient::instance()->send(req.get());
 }
 
 /**
  * @brief Set the answer (chosen option(s)) for a poll 
  */
 void QxTdChatListModel::setPollAnswer(const QString &chatId, const QString &messageId, const QVariantList &optionIds) {
-    QScopedPointer<QxTdSetPollAnswerRequest> req(new QxTdSetPollAnswerRequest);
+    std::unique_ptr<QxTdSetPollAnswerRequest> req(new QxTdSetPollAnswerRequest);
     QList<qint32> targetList;
     foreach(QVariant v, optionIds) {
         targetList << v.value<qint32>();
@@ -621,5 +622,5 @@ void QxTdChatListModel::setPollAnswer(const QString &chatId, const QString &mess
     req->setChatId(chatId.toLong());
     req->setMessageId(messageId.toLong());
     req->setPollOptions(targetList);
-    QxTdClient::instance()->send(req.data());
+    QxTdClient::instance()->send(req.get());
 }

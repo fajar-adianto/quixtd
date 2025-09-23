@@ -1,7 +1,6 @@
 #ifndef QX_TD_TEXT_ENTITY_H
 #define QX_TD_TEXT_ENTITY_H
 
-#include <QScopedPointer>
 #include "qx_td_text_entity_type.h"
 
 class QxTdTextEntity : public QxTdObject
@@ -29,7 +28,7 @@ private:
     Q_DISABLE_COPY(QxTdTextEntity)
     qint32 m_offset;
     qint32 m_length;
-    QScopedPointer<QxTdTextEntityType> m_type;
+    std::unique_ptr<QxTdTextEntityType> m_type;
 };
 
 #endif // QX_TD_TEXT_ENTITY_H

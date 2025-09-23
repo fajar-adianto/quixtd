@@ -95,7 +95,7 @@ private:
     QString m_title;
     //TODO 1.7.9 change to formattedText
     QString m_description;
-    QScopedPointer<QxTdPhotos> m_photo;
+    std::unique_ptr<QxTdPhotos> m_photo;
     bool m_containsPhoto;
     QString m_embedUrl;
     QString m_embedType;
@@ -103,12 +103,12 @@ private:
     qint32 m_embedheight;
     qint32 m_duration;
     QString m_author;
-    QScopedPointer<QxTdAnimation> m_animation;
-    QScopedPointer<QxTdAudio> m_audio;
-    QScopedPointer<QxTdDocument> m_document;
-    QScopedPointer<QxTdSticker> m_sticker;
-    QScopedPointer<QxTdVideo> m_video;
-    QScopedPointer<QxTdVoiceNote> m_voiceNote;
+    std::unique_ptr<QxTdAnimation> m_animation;
+    std::unique_ptr<QxTdAudio> m_audio;
+    std::unique_ptr<QxTdDocument> m_document;
+    std::unique_ptr<QxTdSticker> m_sticker;
+    std::unique_ptr<QxTdVideo> m_video;
+    std::unique_ptr<QxTdVoiceNote> m_voiceNote;
     bool m_hasInstantView;
 };
 

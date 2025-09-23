@@ -2,7 +2,6 @@
 #define QX_TD_PROXY_H
 
 #include <QObject>
-#include <QScopedPointer>
 
 #include "qx_td_proxy_type.h"
 #include "common/qx_abstract_int64_id.h"
@@ -41,7 +40,7 @@ private:
     qint32 m_port;
     qint32 m_lastUsedDate;
     bool m_isEnabled;
-    QScopedPointer<QxTdProxyType> m_type;
+    std::unique_ptr<QxTdProxyType> m_type;
     double m_ping;
 };
 

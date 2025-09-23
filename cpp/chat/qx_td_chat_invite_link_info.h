@@ -54,11 +54,11 @@ signals:
 private:
     QString m_inviteLink;
     QxTdInt64 m_chatId;
-    QScopedPointer<QxTdChatType> m_type;
+    std::unique_ptr<QxTdChatType> m_type;
     QString m_title;
-    QScopedPointer<QxTdChatPhoto> m_photo;
+    std::unique_ptr<QxTdChatPhoto> m_photo;
     QxTdInt32 m_memberCount;
-    QScopedPointer<QxTdObjectListModel<QxTdUser>> m_memberUsers;
+    std::unique_ptr<QxTdObjectListModel<QxTdUser>> m_memberUsers;
     QList<qint64> m_memberUserIds;
     bool m_isPublic;
 

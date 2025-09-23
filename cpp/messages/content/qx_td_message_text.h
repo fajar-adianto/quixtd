@@ -25,8 +25,8 @@ signals:
 
 private:
     Q_DISABLE_COPY(QxTdMessageText)
-    QScopedPointer<QxTdFormattedText> m_text;
-    QScopedPointer<QxTdWebPage> m_webPage;
+    std::unique_ptr<QxTdFormattedText> m_text;
+    std::unique_ptr<QxTdWebPage> m_webPage;
     bool m_hasWebPage;
 };
 

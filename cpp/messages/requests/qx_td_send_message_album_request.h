@@ -1,7 +1,6 @@
 #ifndef QX_TD_SEND_MESSAGE_ALBUM_REQUEST_H
 #define QX_TD_SEND_MESSAGE_ALBUM_REQUEST_H
 
-#include <QScopedPointer>
 #include <QList>
 
 #include "common/qx_td_request.h"
@@ -32,7 +31,7 @@ private:
     qint64 m_chatId;
     qint64 m_replyMessageId;
     QList<QxTdInputMessageContent*> m_contents;
-    QScopedPointer<QxTdMessageSendOptions> m_messageSendOptions;
+    std::unique_ptr<QxTdMessageSendOptions> m_messageSendOptions;
 
 };
 

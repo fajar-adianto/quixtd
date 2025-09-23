@@ -10,7 +10,7 @@ QxTdMessageLocation::QxTdMessageLocation(QObject *parent)
 
 QxTdLocation *QxTdMessageLocation::location() const
 {
-    return m_location.data();
+    return m_location.get();
 }
 
 void QxTdMessageLocation::unmarshalJson(const QJsonObject &json)

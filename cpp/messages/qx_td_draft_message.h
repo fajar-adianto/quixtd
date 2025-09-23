@@ -1,7 +1,6 @@
 #ifndef QX_TD_DRAFT_MESSAGE_H
 #define QX_TD_DRAFT_MESSAGE_H
 
-#include <QScopedPointer>
 #include "requests/content/qx_td_input_message_text.h"
 #include "common/qx_td_int.h"
 
@@ -34,7 +33,7 @@ signals:
 
 private:
     QxTdInt64 m_replyToMessageId;
-    QScopedPointer<QxTdInputMessageText> m_inputMessageText;
+    std::unique_ptr<QxTdInputMessageText> m_inputMessageText;
 };
 
 #endif // QX_TD_DRAFT_MESSAGE_H

@@ -22,12 +22,12 @@ qint32 QxTdVideoNote::length() const
 
 QxTdThumbnail *QxTdVideoNote::thumbnail() const
 {
-    return m_thumbnail.data();
+    return m_thumbnail.get();
 }
 
 QxTdFile *QxTdVideoNote::video() const
 {
-    return m_video.data();
+    return m_video.get();
 }
 
 void QxTdVideoNote::unmarshalJson(const QJsonObject &json)

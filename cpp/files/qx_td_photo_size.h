@@ -30,7 +30,7 @@ signals:
 
 private:
     QString m_type;
-    QScopedPointer<QxTdFile> m_photo;
+    std::unique_ptr<QxTdFile> m_photo;
     qint32 m_width;
     qint32 m_height;
 };

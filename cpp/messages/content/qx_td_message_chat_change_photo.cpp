@@ -10,7 +10,7 @@ QxTdMessageChatChangePhoto::QxTdMessageChatChangePhoto(QObject *parent)
 
 QxTdPhotos *QxTdMessageChatChangePhoto::photo() const
 {
-    return m_photo.data();
+    return m_photo.get();
 }
 
 void QxTdMessageChatChangePhoto::unmarshalJson(const QJsonObject &json)

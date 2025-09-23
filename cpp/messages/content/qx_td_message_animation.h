@@ -25,8 +25,8 @@ signals:
 
 private:
     Q_DISABLE_COPY(QxTdMessageAnimation)
-    QScopedPointer<QxTdAnimation> m_animation;
-    QScopedPointer<QxTdFormattedText> m_caption;
+    std::unique_ptr<QxTdAnimation> m_animation;
+    std::unique_ptr<QxTdFormattedText> m_caption;
 };
 
 #endif // QX_TD_MESSAGE_ANIMATION_H

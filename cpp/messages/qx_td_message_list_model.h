@@ -134,7 +134,7 @@ private:
     qint64 m_jumpToMessageId;
     bool m_highlightJumpedMessage;
     QString m_fileGenerationId;
-    QScopedPointer<QxTdMediaSizeExtractor> m_mediaSizeExtractor;
+    std::unique_ptr<QxTdMediaSizeExtractor> m_mediaSizeExtractor;
 
     QxTdMessage *getDateLabelIfNeeded(QxTdMessage *firstMessage, QxTdMessage *secondMessage);
     void setMessagesRead(QList<qint64> &messages);

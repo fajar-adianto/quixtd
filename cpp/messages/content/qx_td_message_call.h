@@ -39,7 +39,7 @@ signals:
 
 private:
     void updateTypeText();
-    QScopedPointer<QxTdCallDiscardReason> m_discardReason;
+    std::unique_ptr<QxTdCallDiscardReason> m_discardReason;
     qint32 m_duration;
     qint32 m_hours;
     qint32 m_minutes;

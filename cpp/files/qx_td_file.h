@@ -1,7 +1,6 @@
 #ifndef QX_TD_FILE_H
 #define QX_TD_FILE_H
 
-#include <QScopedPointer>
 #include "common/qx_abstract_int64_id.h"
 #include "qx_td_local_file.h"
 #include "qx_td_remote_file.h"
@@ -41,8 +40,8 @@ private slots:
 private:
     QxTdInt53 m_size;
     QxTdInt53 m_expectedSize;
-    QScopedPointer<QxTdLocalFile> m_local;
-    QScopedPointer<QxTdRemoteFile> m_remote;
+    std::unique_ptr<QxTdLocalFile> m_local;
+    std::unique_ptr<QxTdRemoteFile> m_remote;
 };
 
 #endif // QX_TD_FILE_H

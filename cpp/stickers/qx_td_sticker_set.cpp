@@ -32,7 +32,7 @@ QString QxTdStickerSet::name() const
 
 QxTdThumbnail *QxTdStickerSet::thumbnail() const
 {
-    return m_thumbnail.data();
+    return m_thumbnail.get();
 }
 
 bool QxTdStickerSet::hasThumbnail() const
@@ -47,7 +47,7 @@ bool QxTdStickerSet::isAnimated() const
 
 QObject *QxTdStickerSet::qmlModel() const
 {
-    return m_stickers.data();
+    return m_stickers.get();
 }
 
 void QxTdStickerSet::loadDetails() const

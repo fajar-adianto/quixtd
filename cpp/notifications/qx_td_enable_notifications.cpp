@@ -56,7 +56,7 @@ void QxTdEnableNotifications::registerDevice()
         return;
     }
     m_registrationThread.reset(QThread::create([this]{
-    QScopedPointer<QxTdRegisterDeviceRequest> req(new QxTdRegisterDeviceRequest);
+    std::unique_ptr<QxTdRegisterDeviceRequest> req(new QxTdRegisterDeviceRequest);
     req->setToken(m_token);
         while(true) {
             qDebug() << "Registering device for push notifications";

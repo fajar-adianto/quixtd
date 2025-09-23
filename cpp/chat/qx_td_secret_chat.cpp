@@ -1,5 +1,5 @@
 #include "qx_td_secret_chat.h"
-#include <QScopedPointer>
+
 #include "chat/requests/qx_td_get_secret_chat_request.h"
 #include "client/qx_td_client.h"
 
@@ -120,9 +120,9 @@ void QxTdSecretChat::getSecretChatData()
 {
     QxTdChatTypeSecret *secret = qobject_cast<QxTdChatTypeSecret *>(chatType());
     if (secret) {
-        QScopedPointer<QxTdGetSecretChatRequest> req(new QxTdGetSecretChatRequest);
+        std::unique_ptr<QxTdGetSecretChatRequest> req(new QxTdGetSecretChatRequest);
         req->setSecretChatId(secret->secretChatId());
-        QxTdClient::instance()->send(req.data());
+        QxTdClient::instance()->send(req.get());
     }
     else
         qWarning() << "Secret chat is null!";

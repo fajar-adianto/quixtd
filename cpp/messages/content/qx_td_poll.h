@@ -43,11 +43,11 @@ private:
     Q_DISABLE_COPY(QxTdPoll)
     QxTdInt64 m_id;
     QString m_question;
-    QScopedPointer<QxTdObjectListModel<QxTdPollOption>> m_options;
+    std::unique_ptr<QxTdObjectListModel<QxTdPollOption>> m_options;
     qint32 m_totalVoters;
     //List recent voter Ids
     bool m_isAnonymous;
-    QScopedPointer<QxTdPollType> m_pollType;
+    std::unique_ptr<QxTdPollType> m_pollType;
     qint32 m_openPeriod;
     qint32 m_closeDate;
     bool m_isClosed;

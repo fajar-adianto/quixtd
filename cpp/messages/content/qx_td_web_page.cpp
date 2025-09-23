@@ -50,7 +50,7 @@ QString QxTdWebPage::description() const
 
 QxTdPhotos *QxTdWebPage::photo() const
 {
-    return m_photo.data();
+    return m_photo.get();
 }
 bool QxTdWebPage::containsPhoto() const
 {
@@ -89,31 +89,31 @@ QString QxTdWebPage::author() const
 
 QxTdAnimation *QxTdWebPage::animation() const
 {
-    return m_animation.data();
+    return m_animation.get();
 }
 
 QxTdAudio *QxTdWebPage::audio() const
 {
-    return m_audio.data();
+    return m_audio.get();
 }
 QxTdVideo *QxTdWebPage::video() const
 {
-    return m_video.data();
+    return m_video.get();
 }
 
 QxTdVoiceNote *QxTdWebPage::voiceNote() const
 {
-    return m_voiceNote.data();
+    return m_voiceNote.get();
 }
 
 QxTdDocument *QxTdWebPage::document() const
 {
-    return m_document.data();
+    return m_document.get();
 }
 
 QxTdSticker *QxTdWebPage::sticker() const
 {
-    return m_sticker.data();
+    return m_sticker.get();
 }
 
 bool QxTdWebPage::hasInstantView() const

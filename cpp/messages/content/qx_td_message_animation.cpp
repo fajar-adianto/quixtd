@@ -11,11 +11,11 @@ QxTdMessageAnimation::QxTdMessageAnimation(QObject *parent)
 
 QxTdAnimation *QxTdMessageAnimation::animation() const
 {
-    return m_animation.data();
+    return m_animation.get();
 }
 QxTdFormattedText *QxTdMessageAnimation::caption() const
 {
-    return m_caption.data();
+    return m_caption.get();
 }
 void QxTdMessageAnimation::unmarshalJson(const QJsonObject &json)
 {

@@ -32,8 +32,8 @@ signals:
     void bigChanged(QxTdFile *big);
 
 private:
-    QScopedPointer<QxTdFile> m_small;
-    QScopedPointer<QxTdFile> m_big;
+    std::unique_ptr<QxTdFile> m_small;
+    std::unique_ptr<QxTdFile> m_big;
 };
 
 #endif // QX_TD_PHOTO_H

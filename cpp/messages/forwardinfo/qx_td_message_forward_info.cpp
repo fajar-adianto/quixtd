@@ -23,7 +23,7 @@ QxTdMessageForwardInfo::QxTdMessageForwardInfo(QObject *parent)
 
 QxTdMessageForwardOrigin *QxTdMessageForwardInfo::origin() const
 {
-    return m_origin.data();
+    return m_origin.get();
 }
 
 QDateTime QxTdMessageForwardInfo::qmlDate() const
@@ -71,7 +71,7 @@ void QxTdMessageForwardInfo::unmarshalJson(const QJsonObject &json)
     QxTdObject::unmarshalJson(json);
     const QJsonObject origin = json["origin"].toObject();
     m_origin.reset(QxTdMessageForwardOriginFactory::create(origin, this));
-    connect(m_origin.data(), &QxTdMessageForwardOrigin::forwardOriginChanged, this, &QxTdMessageForwardInfo::forwardInfoChanged);
+    connect(m_origin.get(), &QxTdMessageForwardOrigin::forwardOriginChanged, this, &QxTdMessageForwardInfo::forwardInfoChanged);
     m_date = json["date"].toInt();
     m_fromChatId = json["forwarded_from_chat_id"].toVariant().toLongLong();
     m_fromMessageId = json["forwarded_from_message_id"].toVariant().toLongLong();

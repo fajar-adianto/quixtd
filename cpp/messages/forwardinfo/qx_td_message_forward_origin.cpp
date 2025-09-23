@@ -54,7 +54,7 @@ void QxTdMessageForwardOriginChat::unmarshalJson(const QJsonObject &json)
     if (chat) {
         m_senderChatname = chat->title();
     } else {
-        QScopedPointer<QxTdGetChatRequest> req(new QxTdGetChatRequest);
+        std::unique_ptr<QxTdGetChatRequest> req(new QxTdGetChatRequest);
         req->setChatId(m_senderChatId.value());
         QFuture<QxTdResponse> resp = req->sendAsync();
         qxAwait(resp);
@@ -117,7 +117,7 @@ void QxTdMessageForwardOriginChannel::unmarshalJson(const QJsonObject &json)
     if (chat) {
         m_senderChannelname = chat->title();
     } else {
-        QScopedPointer<QxTdGetChatRequest> req(new QxTdGetChatRequest);
+        std::unique_ptr<QxTdGetChatRequest> req(new QxTdGetChatRequest);
         req->setChatId(m_chatId.value());
         QFuture<QxTdResponse> resp = req->sendAsync();
         qxAwait(resp);
@@ -193,7 +193,7 @@ void QxTdMessageForwardOriginUser::unmarshalJson(const QJsonObject &json)
         firstName = user->firstName();
         lastName = user->lastName();
     } else {
-        QScopedPointer<QxTdGetUserRequest> req(new QxTdGetUserRequest);
+        std::unique_ptr<QxTdGetUserRequest> req(new QxTdGetUserRequest);
         req->setUserId(m_senderUserId.value());
         QFuture<QxTdResponse> resp = req->sendAsync();
         qxAwait(resp);

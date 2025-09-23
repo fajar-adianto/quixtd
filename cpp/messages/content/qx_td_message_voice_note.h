@@ -27,8 +27,8 @@ signals:
 
 private:
     Q_DISABLE_COPY(QxTdMessageVoiceNote)
-    QScopedPointer<QxTdVoiceNote> m_voiceNote;
-    QScopedPointer<QxTdFormattedText> m_caption;
+    std::unique_ptr<QxTdVoiceNote> m_voiceNote;
+    std::unique_ptr<QxTdFormattedText> m_caption;
     bool m_isListened;
 };
 

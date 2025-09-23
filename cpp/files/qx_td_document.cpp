@@ -20,12 +20,12 @@ QString QxTdDocument::mimeType() const
 
 QxTdThumbnail *QxTdDocument::thumbnail() const
 {
-    return m_thumbnail.data();
+    return m_thumbnail.get();
 }
 
 QxTdFile *QxTdDocument::document() const
 {
-    return m_document.data();
+    return m_document.get();
 }
 
 void QxTdDocument::unmarshalJson(const QJsonObject &json)

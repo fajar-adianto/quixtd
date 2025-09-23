@@ -2,7 +2,6 @@
 #define QX_TD_INPUT_THUMBNAIL_H
 
 #include <QString>
-#include <QScopedPointer>
 
 #include "common/qx_td_object.h"
 #include "utils/qx_td_media_tools.h"
@@ -28,7 +27,7 @@ public:
 private:
     QString m_originalFile, m_thumbnailFile;
     qint32 m_width, m_height;
-    QScopedPointer<QxTdThumbnailExtractor> m_thumbnailExtractor;
+    std::unique_ptr<QxTdThumbnailExtractor> m_thumbnailExtractor;
 };
 
 #endif // QX_TD_INPUT_THUMBNAIL_H

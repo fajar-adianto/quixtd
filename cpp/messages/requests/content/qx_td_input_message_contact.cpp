@@ -8,7 +8,7 @@ QxTdInputMessageContact::QxTdInputMessageContact(QObject *parent)
 }
 
 QxTdContact *QxTdInputMessageContact::contact() {
-    return m_contact.data();
+    return m_contact.get();
 }
 
 QJsonObject QxTdInputMessageContact::marshalJson()

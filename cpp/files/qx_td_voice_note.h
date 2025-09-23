@@ -34,7 +34,7 @@ private:
     qint32 m_duration;
     QString m_waveform;
     QString m_mimeType;
-    QScopedPointer<QxTdFile> m_voice;
+    std::unique_ptr<QxTdFile> m_voice;
 };
 
 #endif // QX_TD_VOICE_NOTE_H

@@ -25,8 +25,8 @@ signals:
 
 private:
     Q_DISABLE_COPY(QxTdMessageVideo)
-    QScopedPointer<QxTdVideo> m_video;
-    QScopedPointer<QxTdFormattedText> m_caption;
+    std::unique_ptr<QxTdVideo> m_video;
+    std::unique_ptr<QxTdFormattedText> m_caption;
 };
 
 #endif // QX_TD_MESSAGE_VIDEO_H

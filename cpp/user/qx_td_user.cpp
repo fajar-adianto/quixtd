@@ -58,7 +58,7 @@ void QxTdUser::unmarshalJson(const QJsonObject &json)
     }
 
     m_profilePhoto->unmarshalJson(json["profile_photo"].toObject());
-    emit profilePhotoChanged(m_profilePhoto.data());
+    emit profilePhotoChanged(m_profilePhoto.get());
     const bool hasProfilePhoto = m_profilePhoto->small()->id() > 0;
     const bool needsDownload = m_profilePhoto->small()->local()->path().isEmpty();
     if (hasProfilePhoto && needsDownload) {
@@ -82,7 +82,7 @@ void QxTdUser::unmarshalJson(const QJsonObject &json)
 
 QxTdUserType *QxTdUser::userType() const
 {
-    return m_userType.data();
+    return m_userType.get();
 }
 
 QString QxTdUser::restrictionReason() const
@@ -115,27 +115,27 @@ bool QxTdUser::isOnline() const
 
 bool QxTdUser::isDeleted() const
 {
-    return qobject_cast<QxTdUserTypeDeleted*>(m_userType.data());
+    return qobject_cast<QxTdUserTypeDeleted*>(m_userType.get());
 }
 
 bool QxTdUser::isBot() const
 {
-    return qobject_cast<QxTdUserTypeBot*>(m_userType.data());
+    return qobject_cast<QxTdUserTypeBot*>(m_userType.get());
 }
 
 QxTdProfilePhoto *QxTdUser::profilePhoto() const
 {
-    return m_profilePhoto.data();
+    return m_profilePhoto.get();
 }
 
 QxTdUserFullInfo *QxTdUser::fullInfo()
 {
-    return m_fullInfo.data();
+    return m_fullInfo.get();
 }
 
 QxTdUserStatus *QxTdUser::status() const
 {
-    return m_status.data();
+    return m_status.get();
 }
 
 void QxTdUser::setFirstName(QString firstName)
@@ -168,7 +168,7 @@ void QxTdUser::setPhoneNumber(QString phoneNumber)
 void QxTdUser::setFullInfo(QxTdUserFullInfo *fullInfo)
 {
     m_fullInfo.reset(fullInfo);
-    emit fullInfoChanged(m_fullInfo.data());
+    emit fullInfoChanged(m_fullInfo.get());
 }
 
 void QxTdUser::setStatus(QxTdUserStatus *status)
@@ -180,7 +180,7 @@ void QxTdUser::setStatus(QxTdUserStatus *status)
     }
 
     m_status.reset(status);
-    emit statusChanged(m_status.data());
+    emit statusChanged(m_status.get());
 
     if (m_status->toString() != oldStatusString) {
         emit m_status->statusStringChanged(m_status->toString());
@@ -259,7 +259,7 @@ QString QxTdUser::avatarColor(qint64 userId)
 }
 
 QxTdEmojiStatus* QxTdUser::emojiStatus() const {
-    return m_emojiStatus.data();
+    return m_emojiStatus.get();
 }
 
 bool QxTdUser::isContact() const {

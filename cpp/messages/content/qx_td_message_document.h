@@ -25,8 +25,8 @@ signals:
 
 private:
     Q_DISABLE_COPY(QxTdMessageDocument)
-    QScopedPointer<QxTdDocument> m_document;
-    QScopedPointer<QxTdFormattedText> m_caption;
+    std::unique_ptr<QxTdDocument> m_document;
+    std::unique_ptr<QxTdFormattedText> m_caption;
 };
 
 #endif // QX_TD_MESSAGE_DOCUMENT_H

@@ -24,7 +24,7 @@ signals:
 
 private:
     Q_DISABLE_COPY(QxTdMessageVideoNote)
-    QScopedPointer<QxTdVideoNote> m_videoNote;
+    std::unique_ptr<QxTdVideoNote> m_videoNote;
     bool m_isViewed;
 };
 

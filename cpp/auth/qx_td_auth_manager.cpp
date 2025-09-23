@@ -114,7 +114,7 @@ void QxTdAuthManager::deleteAccount(const QString &reason)
     std::unique_ptr<QxTdAuthDeleteAccountResponse> resp(new QxTdAuthDeleteAccountResponse);
     resp->setReason(reason);
     qWarning() << "Account deletion is disabled!";
-    //QxTdClient::instance()->send(resp.data());
+    //QxTdClient::instance()->send(resp.get());
 }
 
 void QxTdAuthManager::sendCode(const QString &code)

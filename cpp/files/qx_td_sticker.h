@@ -51,11 +51,11 @@ private:
     qint32 m_width;
     qint32 m_height;
     QString m_emoji;
-    QScopedPointer<QxTdStickerFormat> m_format;
-    QScopedPointer<QxTdStickerType> m_type;
+    std::unique_ptr<QxTdStickerFormat> m_format;
+    std::unique_ptr<QxTdStickerType> m_type;
     bool m_isMask;
-    QScopedPointer<QxTdThumbnail> m_thumbnail;
-    QScopedPointer<QxTdFile> m_sticker;
+    std::unique_ptr<QxTdThumbnail> m_thumbnail;
+    std::unique_ptr<QxTdFile> m_sticker;
 };
 
 #endif // QX_TD_STICKER_H

@@ -53,7 +53,7 @@ void QxTdMessageChatDeleteMember::unmarshalJson(const QJsonObject &json)
             return;
         }
 
-        QScopedPointer<QxTdGetUserRequest> request(new QxTdGetUserRequest);
+        std::unique_ptr<QxTdGetUserRequest> request(new QxTdGetUserRequest);
         request->setUserId(m_uid.value());
         m_watcher.setFuture(request->sendAsync());
     }

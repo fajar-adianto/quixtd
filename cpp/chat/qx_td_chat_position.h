@@ -32,7 +32,7 @@ signals:
     void sourceChanged();
 
 private:
-    QScopedPointer<QxTdChatList> m_list;
+    std::unique_ptr<QxTdChatList> m_list;
     QxTdInt64 m_order;
     bool m_isPinned;
     // QPointer<QxTdChatSource> m_source

@@ -15,7 +15,7 @@ QxTdMessageCall::QxTdMessageCall(QObject *parent)
 
 QxTdCallDiscardReason *QxTdMessageCall::discardReason() const
 {
-    return m_discardReason.data();
+    return m_discardReason.get();
 }
 
 qint32 QxTdMessageCall::duration() const

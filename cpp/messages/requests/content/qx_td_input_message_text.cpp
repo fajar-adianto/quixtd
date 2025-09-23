@@ -51,7 +51,7 @@ void QxTdInputMessageText::unmarshalJson(const QJsonObject &json)
     QxTdInputMessageContent::unmarshalJson(json);
     m_clear_draft = json["clear_draft"].toBool();
     m_disable_web_page_preview = json["m_disable_web_page_preview"].toBool();
-    QScopedPointer<QxTdFormattedText> formattedText(new QxTdFormattedText);
+    std::unique_ptr<QxTdFormattedText> formattedText(new QxTdFormattedText);
     formattedText->unmarshalJson(json["text"].toObject());
     m_text = formattedText->text();
     emit inputMessageTextChanged();

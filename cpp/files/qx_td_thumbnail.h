@@ -30,8 +30,8 @@ signals:
     void thumbnailChanged();
 
 private:
-    QScopedPointer<QxTdThumbnailFormat> m_format;
-    QScopedPointer<QxTdFile> m_file;
+    std::unique_ptr<QxTdThumbnailFormat> m_format;
+    std::unique_ptr<QxTdFile> m_file;
     qint32 m_width;
     qint32 m_height;
 };

@@ -20,12 +20,12 @@ QString QxTdPoll::question() const {
 }
 
 QxTdObjectListModel<QxTdPollOption> *QxTdPoll::options() const {
-    return m_options.data();
+    return m_options.get();
 }
 
 bool QxTdPoll::userHasChosen() const {
-    for( auto i = 0; i < m_options.data()->count(); i++ ) {
-        auto option = static_cast<QxTdPollOption *>(m_options.data()->get(i));
+    for( auto i = 0; i < m_options.get()->count(); i++ ) {
+        auto option = static_cast<QxTdPollOption *>(m_options.get()->get(i));
         if (option->isChosen())
             return true;
     }
@@ -49,22 +49,22 @@ bool QxTdPoll::isClosed() const {
 }
 
 bool QxTdPoll::isQuiz() const {
-    return m_pollType.data() != nullptr && m_pollType.data()->correctOption() != -1;
+    return (m_pollType.get() != nullptr) && m_pollType.get()->correctOption() != -1;
 }
 
 qint32 QxTdPoll::quizCorrectChoice() const {
-    if (m_pollType.data() == nullptr) {
+    if (m_pollType.get() == nullptr) {
         return -1;
     }
-    return m_pollType.data()->correctOption();
+    return m_pollType.get()->correctOption();
 }
 
 QxTdFormattedText *QxTdPoll::quizExplanation() const {
-    return m_pollType.data()->explanation();
+    return m_pollType.get()->explanation();
 }
 
 bool QxTdPoll::isMultiChoice() const {
-    return m_pollType.data() != nullptr && m_pollType.data()->allowMultipleAnswers();
+    return m_pollType.get() != nullptr && m_pollType.get()->allowMultipleAnswers();
 }
 
 void QxTdPoll::unmarshalJson(const QJsonObject &json)

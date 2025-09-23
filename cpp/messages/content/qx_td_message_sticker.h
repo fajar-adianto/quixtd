@@ -25,7 +25,7 @@ signals:
 
 private:
     Q_DISABLE_COPY(QxTdMessageSticker)
-    QScopedPointer<QxTdSticker> m_sticker;
+    std::unique_ptr<QxTdSticker> m_sticker;
     bool m_is_premium;
 };
 

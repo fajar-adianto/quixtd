@@ -4,7 +4,6 @@
 #include <functional>
 #include <QPointer>
 #include <QSharedPointer>
-#include <QScopedPointer>
 #include <QHash>
 #include <QFuture>
 #include <QThread>
@@ -67,7 +66,7 @@ public:
      * Send an asynchronous request that can be waited on for a response.
      *
      * @example
-     * QScopedPointer<QxTdGetChatsRequest> req(new QxTdGetChatsRequest);
+     * std::unique_ptr<QxTdGetChatsRequest> req(new QxTdGetChatsRequest);
      *
      * The response to getChats comes down the `chats` signal
      * QFuture<QxTdResponse> resp = QxTdClient::instance()->sendAsync(req, &QxTdClient::chats);
@@ -193,7 +192,7 @@ private:
     bool m_debug;
     void init();
     void handleUpdateOption(const QJsonObject &json);
-    QScopedPointer<QThread> m_worker;
+    std::unique_ptr<QThread> m_worker;
     QPointer<QxTdAuthState> m_authState;
     QPointer<QxTdConnectionState> m_connectionState;
     QHash<QString, ReceiveCallback> m_events;

@@ -1,8 +1,6 @@
 #ifndef QX_TD_SEND_MESSAGE_REQUEST_H
 #define QX_TD_SEND_MESSAGE_REQUEST_H
 
-#include <QScopedPointer>
-
 #include "common/qx_td_request.h"
 #include "qx_td_input_message_content.h"
 #include "qx_td_message_send_options.h"
@@ -31,7 +29,7 @@ private:
     qint64 m_chatId;
     qint64 m_replyMessageId;
     QxTdInputMessageContent *m_content;
-    QScopedPointer<QxTdMessageSendOptions> m_messageSendOptions;
+    std::unique_ptr<QxTdMessageSendOptions> m_messageSendOptions;
 
 };
 

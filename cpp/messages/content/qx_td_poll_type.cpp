@@ -33,7 +33,7 @@ qint32 QxTdPollTypeQuiz::correctOption() const {
 
 
 QxTdFormattedText *QxTdPollTypeQuiz::explanation() const {
-    return m_explanation.data();
+    return m_explanation.get();
 }
 
 void QxTdPollTypeQuiz::unmarshalJson(const QJsonObject &json)

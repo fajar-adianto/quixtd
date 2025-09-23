@@ -43,8 +43,8 @@ private:
     QString m_performer;
     QString m_fileName;
     QString m_mimeType;
-    QScopedPointer<QxTdThumbnail> m_albumCoverThumbnail;
-    QScopedPointer<QxTdFile> m_audio;
+    std::unique_ptr<QxTdThumbnail> m_albumCoverThumbnail;
+    std::unique_ptr<QxTdFile> m_audio;
 };
 
 #endif // QX_TD_AUDIO_H

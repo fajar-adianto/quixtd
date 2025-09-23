@@ -1,7 +1,6 @@
 #ifndef QX_TD_MESSAGE_LOCATION_H
 #define QX_TD_MESSAGE_LOCATION_H
 
-#include <QScopedPointer>
 #include "messages/qx_td_message_content.h"
 #include "qx_td_location.h"
 
@@ -23,7 +22,7 @@ signals:
 
 private:
     Q_DISABLE_COPY(QxTdMessageLocation)
-    QScopedPointer<QxTdLocation> m_location;
+    std::unique_ptr<QxTdLocation> m_location;
 };
 
 #endif // QX_TD_MESSAGE_LOCATION_H

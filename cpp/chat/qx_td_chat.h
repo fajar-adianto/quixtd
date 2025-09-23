@@ -418,13 +418,13 @@ protected:
 
 private:
     Q_DISABLE_COPY(QxTdChat)
-    QScopedPointer<QxTdChatType> m_chatType;
-    QScopedPointer<QxTdChatActionBar> m_chatActionBar;
+    std::unique_ptr<QxTdChatType> m_chatType;
+    std::unique_ptr<QxTdChatActionBar> m_chatActionBar;
     QString m_title;
     qint64 m_my_id;
-    QScopedPointer<QxTdMessage> m_lastMessage;
-    QScopedPointer<QxTdChatPhoto> m_chatPhoto;
-    QScopedPointer<QxTdChatPosition> m_position;
+    std::unique_ptr<QxTdMessage> m_lastMessage;
+    std::unique_ptr<QxTdChatPhoto> m_chatPhoto;
+    std::unique_ptr<QxTdChatPosition> m_position;
     bool m_canBeReported;
     QxTdInt32 m_unreadCount;
     QxTdInt64 m_lastReadInboxMsg;
@@ -432,8 +432,8 @@ private:
     QxTdInt32 m_unreadMentionCount;
     QxTdInt32 m_onlineMemberCount;
     QxTdInt64 m_replyMarkupMessageId;
-    QScopedPointer<QxTdMessage> m_replyMarkupMessage;
-    QScopedPointer<QxTdNotificationSettings> m_notifySettings;
+    std::unique_ptr<QxTdMessage> m_replyMarkupMessage;
+    std::unique_ptr<QxTdNotificationSettings> m_notifySettings;
     bool m_chatOpen;
     bool m_chatBlocked;
 
@@ -458,7 +458,7 @@ private:
     QMap<qint64, useraction> m_chatActions;
     QJsonObject m_lastMsgJson;
     int m_currentMessageIndex = -1;
-    QScopedPointer<QxTdDraftMessage> m_draftMessage;
+    std::unique_ptr<QxTdDraftMessage> m_draftMessage;
 };
 
 #endif // QX_TD_CHAT_H

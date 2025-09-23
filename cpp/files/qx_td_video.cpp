@@ -38,12 +38,12 @@ QString QxTdVideo::mimeType() const
 
 QxTdThumbnail *QxTdVideo::thumbnail() const
 {
-    return m_thumbnail.data();
+    return m_thumbnail.get();
 }
 
 QxTdFile *QxTdVideo::video() const
 {
-    return m_video.data();
+    return m_video.get();
 }
 
 void QxTdVideo::unmarshalJson(const QJsonObject &json)

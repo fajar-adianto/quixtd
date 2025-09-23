@@ -21,7 +21,7 @@ qint32 QxTdTextEntity::length() const
 
 QxTdTextEntityType *QxTdTextEntity::entityType() const
 {
-    return m_type.data();
+    return m_type.get();
 }
 
 void QxTdTextEntity::unmarshalJson(const QJsonObject &json)

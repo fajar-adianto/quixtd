@@ -33,9 +33,7 @@
 #include "utils/qx_td_translate_tools.h"
 #include "utils/qx_td_await.h"
 
-#include <QDebug>
 #include <QJsonArray>
-#include <QScopedPointer>
 #include <QtPositioning/QGeoCoordinate>
 #include <QTimer>
 
@@ -158,7 +156,7 @@ void QxTdMessageListModel::setChat(QxTdChat *chat)
         loadMessages(m_chat->lastReadInboxMessageId(), MESSAGE_LOAD_WINDOW / 2, MESSAGE_LOAD_WINDOW / 2);
     } else {
         m_messageHandler = &olderMessagesHandler;
-        QScopedPointer<QxTdMessage> lastMessage(new QxTdMessage());
+        std::unique_ptr<QxTdMessage> lastMessage(new QxTdMessage());
         lastMessage->unmarshalJson(m_chat->lastMessageJson());
         loadMessages(lastMessage->id(), MESSAGE_LOAD_WINDOW, 1);
         connect(QxTdClient::instance(), &QxTdClient::updateChatLastMessage, this, &QxTdMessageListModel::handleUpdateChatLastMessage);
@@ -361,7 +359,7 @@ void QxTdMessageListModel::prependMessage(QxTdMessage *message)
 
 void QxTdMessageListModel::loadMessages(qint64 fromMsgId, unsigned int amountOlder, unsigned int amountNewer)
 {
-    QScopedPointer<QxTdGetChatHistoryRequest> request(new QxTdGetChatHistoryRequest);
+    std::unique_ptr<QxTdGetChatHistoryRequest> request(new QxTdGetChatHistoryRequest);
     request->setChatId(m_chat->id());
     request->setFromMessageId(fromMsgId);
     request->setLimit(static_cast<int>(amountOlder + amountNewer + 1));
@@ -480,15 +478,15 @@ void QxTdMessageListModel::sendMessage(const QString &fullmessage, const bool cl
     qint32 maxMessageLength = QxTdClient::instance()->getOption("message_text_length_max").toInt();
     do {
         QString message = plainText.mid(currentMessagePos, maxMessageLength);
-        QScopedPointer<QxTdSendMessageRequest> request(new QxTdSendMessageRequest);
+        std::unique_ptr<QxTdSendMessageRequest> request(new QxTdSendMessageRequest);
         request->setChatId(m_chat->id());
         request->setDisableNotification(disableNotification);
         request->setSendDate(sendDate);
-        QScopedPointer<QxTdInputMessageText> messageText(new QxTdInputMessageText);
+        std::unique_ptr<QxTdInputMessageText> messageText(new QxTdInputMessageText);
         messageText->setText(message);
         messageText->setEntities(formatEntities);
         messageText->setClearDraft(clearDraft);
-        request->setContent(messageText.data());
+        request->setContent(messageText.get());
         if (isFirstMessage) {
             request->setReplyToMessageId(replyToMessageId.toLongLong());
             isFirstMessage = false;
@@ -522,11 +520,11 @@ void QxTdMessageListModel::prepareAndSendAttachmentMessage(QxTdInputMessageConte
     if (!m_chat) {
         return;
     }
-    QScopedPointer<QxTdSendMessageRequest> request(new QxTdSendMessageRequest);
+    std::unique_ptr<QxTdSendMessageRequest> request(new QxTdSendMessageRequest);
     request->setChatId(m_chat->id());
     request->setContent(content);
     request->setReplyToMessageId(replyToMessageId);
-    QxTdClient::instance()->sendAsync(request.data(), &QxTdClient::message);
+    QxTdClient::instance()->sendAsync(request.get(), &QxTdClient::message);
 }
 
 void QxTdMessageListModel::prepareAndSendAttachmentMessageAlbum(const QList<QxTdInputMessageContent *> &contents, const qint64 &replyToMessageId)
@@ -534,11 +532,11 @@ void QxTdMessageListModel::prepareAndSendAttachmentMessageAlbum(const QList<QxTd
     if (!m_chat) {
         return;
     }
-    QScopedPointer<QxTdSendMessageAlbumRequest> request(new QxTdSendMessageAlbumRequest);
+    std::unique_ptr<QxTdSendMessageAlbumRequest> request(new QxTdSendMessageAlbumRequest);
     request->setChatId(m_chat->id());
     request->setContents(contents);
     request->setReplyToMessageId(replyToMessageId);
-    QxTdClient::instance()->sendAsync(request.data(), &QxTdClient::message);
+    QxTdClient::instance()->sendAsync(request.get(), &QxTdClient::message);
 }
 
 void QxTdMessageListModel::sendMedia(const QString &url, const QString &caption, const qint64 &replyToMessageId, InputMessageType inputMessageType)
@@ -599,11 +597,11 @@ void QxTdMessageListModel::sendVideo(const QString &url, const QString &caption,
 
 void QxTdMessageListModel::sendContact(const QString &firstName, const QString &lastName, const QString &phone, const qint64 &replyToMessageId)
 {
-    QScopedPointer<QxTdInputMessageContact> messageContent(new QxTdInputMessageContact);
+    std::unique_ptr<QxTdInputMessageContact> messageContent(new QxTdInputMessageContact);
     messageContent->contact()->setFirstName(firstName);
     messageContent->contact()->setLastName(lastName);
     messageContent->contact()->setPhoneNumber(phone);
-    prepareAndSendAttachmentMessage(messageContent.data(), replyToMessageId);
+    prepareAndSendAttachmentMessage(messageContent.get(), replyToMessageId);
 }
 
 void QxTdMessageListModel::sendDocument(const QString &url, const QString &caption, const qint64 &replyToMessageId)
@@ -618,25 +616,25 @@ void QxTdMessageListModel::sendDocumentAlbum(const QList<QString> &urls, const Q
 
 void QxTdMessageListModel::sendLocation(const double latitude, const double longitude, const qint32 livePeriod, const qint64 &replyToMessageId)
 {
-    QScopedPointer<QxTdInputMessageLocation> messageContent(new QxTdInputMessageLocation);
+    std::unique_ptr<QxTdInputMessageLocation> messageContent(new QxTdInputMessageLocation);
     messageContent->setLocation(latitude, longitude);
     messageContent->setLivePeriod(livePeriod);
-    prepareAndSendAttachmentMessage(messageContent.data(), replyToMessageId);
+    prepareAndSendAttachmentMessage(messageContent.get(), replyToMessageId);
 }
 
 void QxTdMessageListModel::sendSticker(QxTdSticker *sticker, const QString &replyToMessageId)
 {
-    QScopedPointer<QxTdInputMessageSticker> messageContent(new QxTdInputMessageSticker);
+    std::unique_ptr<QxTdInputMessageSticker> messageContent(new QxTdInputMessageSticker);
     messageContent->setSticker(sticker);
-    prepareAndSendAttachmentMessage(messageContent.data(), replyToMessageId.toLongLong());
+    prepareAndSendAttachmentMessage(messageContent.get(), replyToMessageId.toLongLong());
 }
 
 void QxTdMessageListModel::sendVoiceNote(const QString &filename, const qint64 &replyToMessageId)
 {
     if (m_voiceNoteRecorder->duration() > 0) {
-        QScopedPointer<QxTdInputMessageVoiceNote> messageContent(new QxTdInputMessageVoiceNote);
-        setAttachmentProperties(messageContent.data(), filename);
-        prepareAndSendAttachmentMessage(messageContent.data(), replyToMessageId);
+        std::unique_ptr<QxTdInputMessageVoiceNote> messageContent(new QxTdInputMessageVoiceNote);
+        setAttachmentProperties(messageContent.get(), filename);
+        prepareAndSendAttachmentMessage(messageContent.get(), replyToMessageId);
     }
 }
 
@@ -649,7 +647,7 @@ void QxTdMessageListModel::editMessageText(qint64 messageId, const QString &mess
     QString plainText;
     QJsonArray formatEntities = QxTdHelpers::formatPlainTextMessage(message, plainText);
 
-    QScopedPointer<QxTdEditMessageTextRequest> request(new QxTdEditMessageTextRequest);
+    std::unique_ptr<QxTdEditMessageTextRequest> request(new QxTdEditMessageTextRequest);
     request->setChatId(m_chat->id());
     request->setMessageId(messageId);
     request->setText(plainText);
@@ -676,7 +674,7 @@ void QxTdMessageListModel::editMessageCaption(qint64 messageId, const QString &m
     QString plainText;
     QJsonArray formatEntities = QxTdHelpers::formatPlainTextMessage(message, plainText);
 
-    QScopedPointer<QxTdEditMessageCaptionRequest> request(new QxTdEditMessageCaptionRequest);
+    std::unique_ptr<QxTdEditMessageCaptionRequest> request(new QxTdEditMessageCaptionRequest);
     request->setChatId(m_chat->id());
     request->setMessageId(messageId);
     request->setText(plainText);
@@ -703,20 +701,20 @@ void QxTdMessageListModel::deleteMessage(const qint64 messageId, const bool revo
 
 void QxTdMessageListModel::deleteMessages(const QList<qint64> &messageIds, const bool revoke)
 {
-    QScopedPointer<QxTdDeleteMessagesRequest> req(new QxTdDeleteMessagesRequest);
+    std::unique_ptr<QxTdDeleteMessagesRequest> req(new QxTdDeleteMessagesRequest);
     req->setChatId(m_chat->id());
     req->setMessageIds(messageIds);
     req->setRevoke(revoke);
-    QxTdClient::instance()->send(req.data());
+    QxTdClient::instance()->send(req.get());
 }
 
 void QxTdMessageListModel::setMessagesRead(QList<qint64> &messages)
 {
     // TODO: Determine how to detect which messages are in the visible part of the window
-    QScopedPointer<QxTdViewMessagesRequest> req(new QxTdViewMessagesRequest);
+    std::unique_ptr<QxTdViewMessagesRequest> req(new QxTdViewMessagesRequest);
     req->setChatId(m_chat->id());
     req->setMessageIds(messages);
-    QxTdClient::instance()->send(req.data());
+    QxTdClient::instance()->send(req.get());
     if (messages.contains(m_chat->lastMessage()->id())) {
         QxTdClient::instance()->clearNotificationFor(m_chat->id());
     }
@@ -833,10 +831,10 @@ void QxTdMessageListModel::removeChatActionBar()
 void QxTdMessageListModel::reportChat(const QString chatId, const QxTdChatReportReason::ChatReportReasonType &reason, const QString &text)
 {
 
-    QScopedPointer<QxTdReportChatRequest> req(new QxTdReportChatRequest);
+    std::unique_ptr<QxTdReportChatRequest> req(new QxTdReportChatRequest);
     req->setChatId(chatId);
     // req->setMessageIds(messages);
-    QScopedPointer<QxTdChatReportReason> reasonObj;
+    std::unique_ptr<QxTdChatReportReason> reasonObj;
     switch (reason) {
     case QxTdChatReportReason::ChatReportReasonChildAbuse:
         reasonObj.reset(new QxTdChatReportReasonChildAbuse());
@@ -863,14 +861,14 @@ void QxTdMessageListModel::reportChat(const QString chatId, const QxTdChatReport
         reasonObj.reset(new QxTdChatReportReasonViolence());
         break;
     }
-    req->setReason(reasonObj.data());
+    req->setReason(reasonObj.get());
     req->setText(text);
     req->sendAsync();
 }
 
 void QxTdMessageListModel::requestMessageLink(const QString chatId, const QString messageId)
 {
-    QScopedPointer<QxTdGetMessageLinkRequest> req(new QxTdGetMessageLinkRequest);
+    std::unique_ptr<QxTdGetMessageLinkRequest> req(new QxTdGetMessageLinkRequest);
     req->setChatId(chatId.toLong());
     req->setMessageId(messageId.toLong());
     req->sendAsync();
@@ -898,7 +896,7 @@ void QxTdMessageListModel::toggleMessageSenderIsBlocked(const qint64 id, const b
             sender->unmarshalJson(messageSender, "chat_id");
             break;
     }
-    QScopedPointer<QxTdToggleMessageSenderIsBlockedRequest> req(new QxTdToggleMessageSenderIsBlockedRequest);
+    std::unique_ptr<QxTdToggleMessageSenderIsBlockedRequest> req(new QxTdToggleMessageSenderIsBlockedRequest);
     req->setSenderId(sender);
     req->setIsBlocked(isBlocked);
     req->sendAsync();
@@ -907,7 +905,7 @@ void QxTdMessageListModel::toggleMessageSenderIsBlocked(const qint64 id, const b
 
 void QxTdMessageListModel::searchChatMessages(const QString chatId, const QString query, const QString fromMessageId)
 {
-    QScopedPointer<QxTdSearchChatMessagesRequest> req(new QxTdSearchChatMessagesRequest);
+    std::unique_ptr<QxTdSearchChatMessagesRequest> req(new QxTdSearchChatMessagesRequest);
     req->setChatId(chatId.toLong());
     req->setQuery(query);
     req->setFromMessageId(fromMessageId.toLong());

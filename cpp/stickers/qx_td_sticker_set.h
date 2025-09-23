@@ -2,7 +2,7 @@
 #define QX_TD_STICKER_SET_H
 
 #include <QObject>
-#include <QScopedPointer>
+
 #include "models/qx_td_object_list_model.h"
 #include "common/qx_td_object.h"
 #include "files/qx_td_thumbnail.h"
@@ -40,13 +40,13 @@ signals:
     void stickerSetChanged();
 
 private:
-    QScopedPointer<QxTdObjectListModel<QxTdSticker>> m_stickers;
+    std::unique_ptr<QxTdObjectListModel<QxTdSticker>> m_stickers;
     QxTdInt64 m_id;
     QString m_title;
     QString m_name;
-    QScopedPointer<QxTdThumbnail> m_thumbnail;
-    QScopedPointer<QxTdStickerFormat> m_format;
-    QScopedPointer<QxTdStickerType> m_type;
+    std::unique_ptr<QxTdThumbnail> m_thumbnail;
+    std::unique_ptr<QxTdStickerFormat> m_format;
+    std::unique_ptr<QxTdStickerType> m_type;
     bool m_hasThumbnail;
     bool m_isAnimated;
     bool m_detailsLoaded;

@@ -1,8 +1,6 @@
 #include "qx_td_contact.h"
 
 #include <QVariant>
-#include <QDebug>
-#include <QScopedPointer>
 
 #include "qx_td_users.h"
 #include "requests/qx_td_search_user_by_phone_number_request.h"
@@ -109,7 +107,7 @@ void QxTdContact::unmarshalJson(const QJsonObject &json)
     getUserFromModel(json["user_id"].toVariant().toLongLong());
     if (!m_user) {
         qWarning() << "QxTdContact: User was not found in users datamodel, trying to search on Telegram server...";
-        QScopedPointer<QxTdSearchUserByPhoneNumberRequest> req(new QxTdSearchUserByPhoneNumberRequest());
+        std::unique_ptr<QxTdSearchUserByPhoneNumberRequest> req(new QxTdSearchUserByPhoneNumberRequest());
         req->setPhoneNumber(m_phoneNumber);
         auto future = req->sendAsync();
         AsyncFuture::observe(future).subscribe([this](QxTdResponse resp) {

@@ -12,12 +12,12 @@ QxTdThumbnail::QxTdThumbnail(QObject *parent)
 
 QxTdThumbnailFormat *QxTdThumbnail::format() const
 {
-    return m_format.data();
+    return m_format.get();
 }
 
 QxTdFile *QxTdThumbnail::file() const
 {
-    return m_file.data();
+    return m_file.get();
 }
 
 qint32 QxTdThumbnail::width() const

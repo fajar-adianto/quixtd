@@ -2,7 +2,7 @@
 #define QX_TD_SETTINGS_H
 
 #include <QObject>
-#include <QScopedPointer>
+
 #include "common/qx_td_object.h"
 #include "models/qx_td_object_list_model.h"
 #include "qx_td_proxy.h"
@@ -32,7 +32,7 @@ signals:
 private:
     void handleProxyServers(const QJsonObject &json);
 
-    QScopedPointer<QxTdObjectListModel<QxTdProxy>> m_proxies;
+    std::unique_ptr<QxTdObjectListModel<QxTdProxy>> m_proxies;
 };
 
 #endif // QX_TD_SETTINGS_H

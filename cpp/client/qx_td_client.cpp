@@ -50,7 +50,7 @@ QxTdClient::QxTdClient(QObject *parent)
     , m_tagcounter(0)
     , m_auxdb(QStandardPaths::writableLocation(QStandardPaths::AppDataLocation).append("/auxdb"),
               QGuiApplication::applicationDirPath().append("/assets"), this)
-    , m_postalClient("teleports.ubports_teleports")
+    , m_postalClient("quixtd.telex")
     , m_debug(false)
 {
     if (!m_debug) {
@@ -64,7 +64,7 @@ QxTdClient::QxTdClient(QObject *parent)
     m_auxdb.getAvatarMapTable()->resetUnreadMap();
     QThreadPool::globalInstance()->setMaxThreadCount(99);
     init();
-    auto thread = m_worker.data();
+    auto thread = m_worker.get();
     QxTdWorker *worker = new QxTdWorker();
     worker->moveToThread(thread);
     connect(worker, &QxTdWorker::recv, this, &QxTdClient::handleRecv);
@@ -410,7 +410,7 @@ void QxTdClient::clearNotificationFor(const qint64 id) {
 
 void QxTdClient::shutDown()
 {
-    QScopedPointer<QxTdCloseRequest> req(new QxTdCloseRequest);
+    std::unique_ptr<QxTdCloseRequest> req(new QxTdCloseRequest);
     req->sendAsync();
     while (m_authState->type() != QxTdAuthState::Type::AUTHORIZATION_STATE_CLOSED)
     {

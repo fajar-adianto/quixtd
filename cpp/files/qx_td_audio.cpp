@@ -36,12 +36,12 @@ QString QxTdAudio::mimeType() const
 
 QxTdThumbnail *QxTdAudio::albumCoverThumbnail() const
 {
-    return m_albumCoverThumbnail.data();
+    return m_albumCoverThumbnail.get();
 }
 
 QxTdFile *QxTdAudio::audio() const
 {
-    return m_audio.data();
+    return m_audio.get();
 }
 
 void QxTdAudio::unmarshalJson(const QJsonObject &json)

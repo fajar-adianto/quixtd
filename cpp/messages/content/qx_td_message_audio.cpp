@@ -11,11 +11,11 @@ QxTdMessageAudio::QxTdMessageAudio(QObject *parent)
 
 QxTdAudio *QxTdMessageAudio::audio() const
 {
-    return m_audio.data();
+    return m_audio.get();
 }
 QxTdFormattedText *QxTdMessageAudio::caption() const
 {
-    return m_caption.data();
+    return m_caption.get();
 }
 void QxTdMessageAudio::unmarshalJson(const QJsonObject &json)
 {

@@ -28,7 +28,7 @@ bool QxTdProxy::isEnabled() {
 }
 
 QxTdProxyType *QxTdProxy::type() {
-    return m_type.data();
+    return m_type.get();
 }
 
 double QxTdProxy::ping()
@@ -59,7 +59,7 @@ void QxTdProxy::unmarshalJson(const QJsonObject &json)
 
 void QxTdProxy::requestProxyServerPing() {
     m_ping = -1;
-    QScopedPointer<QxTdPingProxyRequest> req(new QxTdPingProxyRequest);
+    std::unique_ptr<QxTdPingProxyRequest> req(new QxTdPingProxyRequest);
     req->setId(id());
     auto future = req->sendAsync();
     AsyncFuture::observe(future).subscribe([this](QxTdResponse resp) {

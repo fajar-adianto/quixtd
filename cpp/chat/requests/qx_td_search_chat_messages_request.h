@@ -33,7 +33,7 @@ public:
 private:
     qint64 m_chatId;
     QString m_query;
-    //QScopedPointer<QxTdMessageSender> m_senderId;
+    //std::unique_ptr<QxTdMessageSender> m_senderId;
     qint64 m_fromMessageId;
     qint32 m_offset;
     qint32 m_limit;

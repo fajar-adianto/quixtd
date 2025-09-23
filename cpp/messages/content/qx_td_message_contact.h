@@ -1,7 +1,6 @@
 #ifndef QX_TD_MESSAGE_CONTACT_H
 #define QX_TD_MESSAGE_CONTACT_H
 
-#include <QScopedPointer>
 #include "messages/qx_td_message_content.h"
 #include "user/qx_td_contact.h"
 
@@ -24,7 +23,7 @@ signals:
     
 private:
     Q_DISABLE_COPY(QxTdMessageContact)
-    QScopedPointer<QxTdContact> m_contact;
+    std::unique_ptr<QxTdContact> m_contact;
 };
 
 #endif // QX_TD_MESSAGE_CONTACT_H

@@ -32,8 +32,8 @@ private:
     Q_DISABLE_COPY(QxTdDocument)
     QString m_fileName;
     QString m_mimeType;
-    QScopedPointer<QxTdThumbnail> m_thumbnail;
-    QScopedPointer<QxTdFile> m_document;
+    std::unique_ptr<QxTdThumbnail> m_thumbnail;
+    std::unique_ptr<QxTdFile> m_document;
 };
 
 #endif // QX_TD_DOCUMENT_H

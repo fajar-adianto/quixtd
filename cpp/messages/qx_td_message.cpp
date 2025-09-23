@@ -81,7 +81,7 @@ qint64 QxTdMessage::chatId() const
 
 QxTdMessageSender *QxTdMessage::sender() const
 {
-    return m_sender.data();
+    return m_sender.get();
 }
 
 void QxTdMessage::unmarshalJson(const QJsonObject &json)
@@ -136,13 +136,13 @@ void QxTdMessage::unmarshalJson(const QJsonObject &json)
     m_containsUnreadMention = json["contains_unread_mention"].toBool();
     m_replyToMessageId = json["reply_to_message_id"];
     if (isReply() && !isCollapsed()) {
-        if (m_messageRepliedTo == nullptr) {
+        if (m_messageRepliedTo.isNull()) {
             connect(QxTdClient::instance(), &QxTdClient::message, this, &QxTdMessage::handleMessage);
         }
-        QScopedPointer<QxTdGetMessageRequest> request(new QxTdGetMessageRequest);
+        std::unique_ptr<QxTdGetMessageRequest> request(new QxTdGetMessageRequest);
         request->setChatId(chatId());
         request->setMessageId(replyToMessageId());
-        QxTdClient::instance()->send(request.data());
+        QxTdClient::instance()->send(request.get());
     }
 
     const QJsonObject content = json["content"].toObject();
@@ -150,17 +150,17 @@ void QxTdMessage::unmarshalJson(const QJsonObject &json)
     m_content->unmarshalJson(content);
     switch (m_content->type()) {
     case QxTdObject::MESSAGE_CALL: {
-        auto *c = qobject_cast<QxTdMessageCall *>(m_content.data());
+        auto *c = qobject_cast<QxTdMessageCall *>(m_content.get());
         c->setOutgoing(m_isOutgoing);
         break;
     }
     case QxTdObject::MESSAGE_CHAT_ADD_MEMBERS: {
-        auto *c = qobject_cast<QxTdMessageChatAddMembers *>(m_content.data());
+        auto *c = qobject_cast<QxTdMessageChatAddMembers *>(m_content.get());
         c->setSenderUserId(m_sender->id());
         break;
     }
     case QxTdObject::MESSAGE_CHAT_DELETE_MEMBER: {
-        auto *c = qobject_cast<QxTdMessageChatDeleteMember *>(m_content.data());
+        auto *c = qobject_cast<QxTdMessageChatDeleteMember *>(m_content.get());
         c->setSenderUserId(m_sender->id());
         break;
     }
@@ -210,12 +210,12 @@ void QxTdMessage::unmarshalUpdateContent(const QJsonObject &content)
 
 QxTdMessageSendingState *QxTdMessage::sendingState() const
 {
-    return m_sendingState.data();
+    return m_sendingState.get();
 }
 
 QxTdMessageSchedulingState *QxTdMessage::schedulingState() const
 {
-    return m_schedulingState.data();
+    return m_schedulingState.get();
 }
 
 bool QxTdMessage::isOutgoing() const
@@ -324,22 +324,22 @@ bool QxTdMessage::containsUnreadMention() const
 
 QxTdMessageContent *QxTdMessage::content() const
 {
-    return m_content.data();
+    return m_content.get();
 }
 
 QxTdReplyMarkup *QxTdMessage::replyMarkup() const
 {
-    return m_replyMarkup.data();
+    return m_replyMarkup.get();
 }
 
 QxTdMessageForwardInfo *QxTdMessage::forwardInfo() const
 {
-    return m_forwardInfo.data();
+    return m_forwardInfo.get();
 }
 
 QxTdMessageInteractionInfo *QxTdMessage::interactionInfo() const
 {
-    return m_interactionInfo.data();
+    return m_interactionInfo.get();
 }
 
 bool QxTdMessage::isForwarded() const
@@ -350,7 +350,7 @@ bool QxTdMessage::isForwarded() const
 QString QxTdMessage::summary() const
 {
     QString content;
-    if (!m_content.isNull())
+    if (m_content != nullptr)
     {
         if (m_content->typeText() != "") {
             content = QString("%1 %2").arg(m_content->typeText(), m_content->infoText());

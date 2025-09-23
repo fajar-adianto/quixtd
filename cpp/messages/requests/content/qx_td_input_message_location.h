@@ -17,7 +17,7 @@ public:
     void setLivePeriod(const qint32 live_period);
 
 private:
-    QScopedPointer<QxTdLocation> m_location;
+    std::unique_ptr<QxTdLocation> m_location;
     qint32 m_live_period;
     Q_DISABLE_COPY(QxTdInputMessageLocation)
 };

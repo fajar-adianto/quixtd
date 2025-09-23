@@ -17,7 +17,7 @@ QString QxTdPhotoSize::type() const
 
 QxTdFile *QxTdPhotoSize::photo() const
 {
-    return m_photo.data();
+    return m_photo.get();
 }
 
 qint32 QxTdPhotoSize::width() const

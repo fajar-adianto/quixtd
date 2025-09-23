@@ -12,11 +12,11 @@ QxTdMessageVoiceNote::QxTdMessageVoiceNote(QObject *parent)
 
 QxTdVoiceNote *QxTdMessageVoiceNote::voiceNote() const
 {
-    return m_voiceNote.data();
+    return m_voiceNote.get();
 }
 QxTdFormattedText *QxTdMessageVoiceNote::caption() const
 {
-    return m_caption.data();
+    return m_caption.get();
 }
 bool QxTdMessageVoiceNote::isListened() const
 {

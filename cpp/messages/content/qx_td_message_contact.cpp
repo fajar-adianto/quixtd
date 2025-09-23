@@ -10,7 +10,7 @@ QxTdMessageContact::QxTdMessageContact(QObject *parent)
 
 QxTdContact *QxTdMessageContact::contact() const
 {
-    return m_contact.data();
+    return m_contact.get();
 }
 
 void QxTdMessageContact::unmarshalJson(const QJsonObject &json) {

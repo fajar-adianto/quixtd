@@ -11,7 +11,7 @@ QxTdMessageText::QxTdMessageText(QObject *parent)
 
 QxTdFormattedText *QxTdMessageText::text() const
 {
-    return m_text.data();
+    return m_text.get();
 }
 
 QxTdWebPage *QxTdMessageText::webPage() const
@@ -19,7 +19,7 @@ QxTdWebPage *QxTdMessageText::webPage() const
     if (!m_hasWebPage) {
         return nullptr;
     }
-    return m_webPage.data();
+    return m_webPage.get();
 }
 
 void QxTdMessageText::unmarshalJson(const QJsonObject &json)

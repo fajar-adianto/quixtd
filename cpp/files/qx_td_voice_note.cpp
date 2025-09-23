@@ -36,7 +36,7 @@ QString QxTdVoiceNote::qmlDuration() const
 
 QxTdFile *QxTdVoiceNote::voice() const
 {
-    return m_voice.data();
+    return m_voice.get();
 }
 
 void QxTdVoiceNote::unmarshalJson(const QJsonObject &json)

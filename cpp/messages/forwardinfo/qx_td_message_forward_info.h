@@ -2,7 +2,7 @@
 #define QX_TD_MESSAGE_FORWARD_INFO_H
 
 #include <QDateTime>
-#include <QScopedPointer>
+
 #include "qx_td_message_forward_origin.h"
 
 /**
@@ -39,7 +39,7 @@ signals:
     void forwardInfoChanged();
 
 private:
-    QScopedPointer<QxTdMessageForwardOrigin> m_origin;
+    std::unique_ptr<QxTdMessageForwardOrigin> m_origin;
     qint32 m_date;
     QxTdInt64 m_fromChatId;
     QxTdInt64 m_fromMessageId;
