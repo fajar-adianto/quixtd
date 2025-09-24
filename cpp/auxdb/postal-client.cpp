@@ -22,9 +22,9 @@ License along with this program.  If not, see
 #include <QtDBus/QDBusPendingReply>
 #include <QTimer>
 
-#define POSTAL_SERVICE "com.lomiri.Postal"
-#define POSTAL_PATH "/com/lomiri/Postal"
-#define POSTAL_IFACE "com.lomiri.Postal"
+#define POSTAL_SERVICE "com.quixtd.Postal"
+#define POSTAL_PATH "/com/quixtd/Postal"
+#define POSTAL_IFACE "com.quixtd.Postal"
 
 PostalClient::PostalClient(QString appId)
 {

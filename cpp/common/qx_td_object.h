@@ -2,6 +2,7 @@
 #define QX_TD_OBJECT_H
 
 #include <QObject>
+#include <QHash>
 #include <QJsonObject>
 #include <QJsonArray>
 
@@ -234,6 +235,11 @@ public:
         MINITHUMBNAIL,
     };
     Q_ENUM(Type)
+
+    // Provide a qHash overload
+    inline size_t qHash(QxTdObject::Type key, size_t seed = 0) noexcept {
+        return ::qHash(static_cast<std::underlying_type_t<QxTdObject::Type>>(key), seed);
+    }
 
     Type type() const;
     QString typeString() const;
